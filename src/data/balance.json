@@ -1,0 +1,46 @@
+{
+  "cards": {
+    "faceCardChips": 10,
+    "aceChips": 11
+  },
+  "hands": {
+    "high_card": { "label": "High Card", "chips": 5, "mult": 1 },
+    "pair": { "label": "Pair", "chips": 10, "mult": 2 },
+    "two_pair": { "label": "Two Pair", "chips": 20, "mult": 2 },
+    "three_of_a_kind": { "label": "Three of a Kind", "chips": 30, "mult": 3 },
+    "straight": { "label": "Straight", "chips": 30, "mult": 4 },
+    "flush": { "label": "Flush", "chips": 35, "mult": 4 },
+    "full_house": { "label": "Full House", "chips": 40, "mult": 4 },
+    "four_of_a_kind": { "label": "Four of a Kind", "chips": 60, "mult": 7 },
+    "straight_flush": { "label": "Straight Flush", "chips": 100, "mult": 8 }
+  },
+  "handSize": 8,
+  "discards": 3,
+  "minPlay": 1,
+  "maxPlay": 5,
+  "duelsPerHalf": 8,
+  "readyTimerSeconds": 15,
+  "shotTimerSeconds": 15,
+  "revealFailsafeSeconds": 12,
+  "budget": 100,
+  "offersPerPosition": 4,
+  "cheapestSumCap": 60,
+  "priceBands": [
+    { "id": "rookie", "min": 5, "max": 12 },
+    { "id": "mid", "min": 18, "max": 25 },
+    { "id": "star", "min": 32, "max": 40 },
+    { "id": "legend", "min": 50, "max": 60 }
+  ],
+  "pricing": {
+    "minPrice": 5,
+    "maxPrice": 60,
+    "powerAtMinPrice": 0,
+    "powerAtMaxPrice": 0.6
+  },
+  "usageWeights": {
+    "GK": 1,
+    "DEF": 0.3,
+    "MID": 0.4,
+    "FWD": 0.3
+  }
+}
