@@ -4,10 +4,20 @@
     "label": "Face Hunter",
     "description": "+{chips} chips for each scoring J/Q/K",
     "enabled": true,
-    "allowedPositions": ["DEF", "MID", "FWD"],
+    "allowedPositions": [
+      "DEF",
+      "MID",
+      "FWD"
+    ],
     "powerWeight": 1,
     "params": {
-      "chips": { "type": "number", "min": 8, "max": 30, "step": 1, "default": 15 }
+      "chips": {
+        "type": "number",
+        "min": 8,
+        "max": 30,
+        "step": 1,
+        "default": 15
+      }
     }
   },
   {
@@ -15,10 +25,20 @@
     "label": "Ace Magnet",
     "description": "+{chips} chips for each scoring Ace",
     "enabled": true,
-    "allowedPositions": ["DEF", "MID", "FWD"],
+    "allowedPositions": [
+      "DEF",
+      "MID",
+      "FWD"
+    ],
     "powerWeight": 1,
     "params": {
-      "chips": { "type": "number", "min": 15, "max": 50, "step": 1, "default": 30 }
+      "chips": {
+        "type": "number",
+        "min": 15,
+        "max": 50,
+        "step": 1,
+        "default": 30
+      }
     }
   },
   {
@@ -26,11 +46,30 @@
     "label": "Suit Chips",
     "description": "+{chips} chips for each scoring {suit}",
     "enabled": true,
-    "allowedPositions": ["DEF", "MID", "FWD"],
+    "allowedPositions": [
+      "DEF",
+      "MID",
+      "FWD"
+    ],
     "powerWeight": 1,
     "params": {
-      "suit": { "type": "enum", "options": ["spades", "hearts", "diamonds", "clubs"], "default": "spades" },
-      "chips": { "type": "number", "min": 8, "max": 30, "step": 1, "default": 15 }
+      "suit": {
+        "type": "enum",
+        "options": [
+          "spades",
+          "hearts",
+          "diamonds",
+          "clubs"
+        ],
+        "default": "spades"
+      },
+      "chips": {
+        "type": "number",
+        "min": 8,
+        "max": 30,
+        "step": 1,
+        "default": 15
+      }
     }
   },
   {
@@ -38,11 +77,30 @@
     "label": "Suit Mult",
     "description": "+{mult} mult for each scoring {suit}",
     "enabled": true,
-    "allowedPositions": ["DEF", "MID", "FWD"],
+    "allowedPositions": [
+      "DEF",
+      "MID",
+      "FWD"
+    ],
     "powerWeight": 1,
     "params": {
-      "suit": { "type": "enum", "options": ["spades", "hearts", "diamonds", "clubs"], "default": "hearts" },
-      "mult": { "type": "number", "min": 1, "max": 3, "step": 1, "default": 1 }
+      "suit": {
+        "type": "enum",
+        "options": [
+          "spades",
+          "hearts",
+          "diamonds",
+          "clubs"
+        ],
+        "default": "hearts"
+      },
+      "mult": {
+        "type": "number",
+        "min": 1,
+        "max": 2,
+        "step": 1,
+        "default": 1
+      }
     }
   },
   {
@@ -50,11 +108,28 @@
     "label": "Rank Rhythm",
     "description": "+{mult} mult for each scoring {group} card",
     "enabled": true,
-    "allowedPositions": ["DEF", "MID", "FWD"],
+    "allowedPositions": [
+      "DEF",
+      "MID",
+      "FWD"
+    ],
     "powerWeight": 1,
     "params": {
-      "group": { "type": "enum", "options": ["even", "odd"], "default": "even" },
-      "mult": { "type": "number", "min": 1, "max": 3, "step": 1, "default": 1 }
+      "group": {
+        "type": "enum",
+        "options": [
+          "even",
+          "odd"
+        ],
+        "default": "even"
+      },
+      "mult": {
+        "type": "number",
+        "min": 1,
+        "max": 2,
+        "step": 1,
+        "default": 1
+      }
     }
   },
   {
@@ -62,11 +137,28 @@
     "label": "Hand Chips",
     "description": "+{chips} chips when you play {hands}",
     "enabled": true,
-    "allowedPositions": ["DEF", "MID", "FWD"],
+    "allowedPositions": [
+      "DEF",
+      "MID",
+      "FWD"
+    ],
     "powerWeight": 1,
     "params": {
-      "hands": { "type": "hands", "minCount": 1, "maxCount": 3, "default": ["pair"] },
-      "chips": { "type": "number", "min": 15, "max": 80, "step": 5, "default": 30 }
+      "hands": {
+        "type": "hands",
+        "minCount": 1,
+        "maxCount": 3,
+        "default": [
+          "pair"
+        ]
+      },
+      "chips": {
+        "type": "number",
+        "min": 15,
+        "max": 80,
+        "step": 5,
+        "default": 30
+      }
     }
   },
   {
@@ -74,11 +166,28 @@
     "label": "Hand Mult",
     "description": "+{mult} mult when you play {hands}",
     "enabled": true,
-    "allowedPositions": ["DEF", "MID", "FWD"],
+    "allowedPositions": [
+      "DEF",
+      "MID",
+      "FWD"
+    ],
     "powerWeight": 1,
     "params": {
-      "hands": { "type": "hands", "minCount": 1, "maxCount": 3, "default": ["pair"] },
-      "mult": { "type": "number", "min": 2, "max": 10, "step": 1, "default": 4 }
+      "hands": {
+        "type": "hands",
+        "minCount": 1,
+        "maxCount": 2,
+        "default": [
+          "pair"
+        ]
+      },
+      "mult": {
+        "type": "number",
+        "min": 2,
+        "max": 8,
+        "step": 1,
+        "default": 4
+      }
     }
   },
   {
@@ -86,11 +195,28 @@
     "label": "Multiplier",
     "description": "x{xmult} mult when you play {hands}",
     "enabled": true,
-    "allowedPositions": ["DEF", "MID", "FWD"],
+    "allowedPositions": [
+      "DEF",
+      "MID",
+      "FWD"
+    ],
     "powerWeight": 1,
     "params": {
-      "hands": { "type": "hands", "minCount": 1, "maxCount": 3, "default": ["flush"] },
-      "xmult": { "type": "number", "min": 1.2, "max": 2, "step": 0.1, "default": 1.5 }
+      "hands": {
+        "type": "hands",
+        "minCount": 1,
+        "maxCount": 3,
+        "default": [
+          "flush"
+        ]
+      },
+      "xmult": {
+        "type": "number",
+        "min": 1.2,
+        "max": 2.5,
+        "step": 0.1,
+        "default": 1.5
+      }
     }
   },
   {
@@ -98,10 +224,20 @@
     "label": "Patience",
     "description": "+{mult} mult for each discard you did not use",
     "enabled": true,
-    "allowedPositions": ["DEF", "MID", "FWD"],
+    "allowedPositions": [
+      "DEF",
+      "MID",
+      "FWD"
+    ],
     "powerWeight": 1,
     "params": {
-      "mult": { "type": "number", "min": 1, "max": 3, "step": 1, "default": 1 }
+      "mult": {
+        "type": "number",
+        "min": 1,
+        "max": 2,
+        "step": 1,
+        "default": 1
+      }
     }
   },
   {
@@ -109,11 +245,27 @@
     "label": "Minimalist",
     "description": "+{mult} mult if you play {n} cards or fewer",
     "enabled": true,
-    "allowedPositions": ["DEF", "MID", "FWD"],
+    "allowedPositions": [
+      "DEF",
+      "MID",
+      "FWD"
+    ],
     "powerWeight": 1,
     "params": {
-      "n": { "type": "number", "min": 1, "max": 4, "step": 1, "default": 2 },
-      "mult": { "type": "number", "min": 1, "max": 8, "step": 1, "default": 3 }
+      "n": {
+        "type": "number",
+        "min": 1,
+        "max": 3,
+        "step": 1,
+        "default": 2
+      },
+      "mult": {
+        "type": "number",
+        "min": 1,
+        "max": 8,
+        "step": 1,
+        "default": 3
+      }
     }
   },
   {
@@ -121,10 +273,20 @@
     "label": "Second Chance",
     "description": "+{amount} discard(s) per duel",
     "enabled": true,
-    "allowedPositions": ["DEF", "MID", "FWD"],
+    "allowedPositions": [
+      "DEF",
+      "MID",
+      "FWD"
+    ],
     "powerWeight": 1,
     "params": {
-      "amount": { "type": "number", "min": 1, "max": 2, "step": 1, "default": 1 }
+      "amount": {
+        "type": "number",
+        "min": 1,
+        "max": 2,
+        "step": 1,
+        "default": 1
+      }
     }
   },
   {
@@ -132,10 +294,20 @@
     "label": "Big Hands",
     "description": "Draw +{amount} card(s) each duel",
     "enabled": true,
-    "allowedPositions": ["DEF", "MID", "FWD"],
+    "allowedPositions": [
+      "DEF",
+      "MID",
+      "FWD"
+    ],
     "powerWeight": 1,
     "params": {
-      "amount": { "type": "number", "min": 1, "max": 2, "step": 1, "default": 1 }
+      "amount": {
+        "type": "number",
+        "min": 1,
+        "max": 2,
+        "step": 1,
+        "default": 1
+      }
     }
   },
   {
@@ -143,26 +315,117 @@
     "label": "Keeper Planets",
     "description": "Permanent bonuses for your team's hands: {bonuses}",
     "enabled": true,
-    "allowedPositions": ["GK"],
+    "allowedPositions": [
+      "GK"
+    ],
     "powerWeight": 1,
     "params": {
       "bonuses": {
         "type": "bonuses",
         "count": 2,
         "bounds": {
-          "high_card": { "chips": { "min": 5, "max": 20 }, "mult": { "min": 0, "max": 1 } },
-          "pair": { "chips": { "min": 5, "max": 25 }, "mult": { "min": 0, "max": 2 } },
-          "two_pair": { "chips": { "min": 5, "max": 30 }, "mult": { "min": 0, "max": 2 } },
-          "three_of_a_kind": { "chips": { "min": 10, "max": 40 }, "mult": { "min": 0, "max": 3 } },
-          "straight": { "chips": { "min": 10, "max": 50 }, "mult": { "min": 0, "max": 4 } },
-          "flush": { "chips": { "min": 10, "max": 50 }, "mult": { "min": 0, "max": 4 } },
-          "full_house": { "chips": { "min": 10, "max": 60 }, "mult": { "min": 0, "max": 5 } },
-          "four_of_a_kind": { "chips": { "min": 20, "max": 100 }, "mult": { "min": 0, "max": 8 } },
-          "straight_flush": { "chips": { "min": 30, "max": 150 }, "mult": { "min": 0, "max": 10 } }
+          "high_card": {
+            "chips": {
+              "min": 5,
+              "max": 25
+            },
+            "mult": {
+              "min": 0,
+              "max": 2
+            }
+          },
+          "pair": {
+            "chips": {
+              "min": 5,
+              "max": 25
+            },
+            "mult": {
+              "min": 0,
+              "max": 2
+            }
+          },
+          "two_pair": {
+            "chips": {
+              "min": 5,
+              "max": 20
+            },
+            "mult": {
+              "min": 0,
+              "max": 1
+            }
+          },
+          "three_of_a_kind": {
+            "chips": {
+              "min": 10,
+              "max": 35
+            },
+            "mult": {
+              "min": 0,
+              "max": 2
+            }
+          },
+          "straight": {
+            "chips": {
+              "min": 10,
+              "max": 30
+            },
+            "mult": {
+              "min": 0,
+              "max": 2
+            }
+          },
+          "flush": {
+            "chips": {
+              "min": 10,
+              "max": 30
+            },
+            "mult": {
+              "min": 0,
+              "max": 2
+            }
+          },
+          "full_house": {
+            "chips": {
+              "min": 10,
+              "max": 30
+            },
+            "mult": {
+              "min": 0,
+              "max": 2
+            }
+          },
+          "four_of_a_kind": {
+            "chips": {
+              "min": 20,
+              "max": 100
+            },
+            "mult": {
+              "min": 0,
+              "max": 8
+            }
+          },
+          "straight_flush": {
+            "chips": {
+              "min": 30,
+              "max": 150
+            },
+            "mult": {
+              "min": 0,
+              "max": 10
+            }
+          }
         },
         "default": [
-          { "hand": "pair", "chips": 15, "mult": 1 },
-          { "hand": "flush", "chips": 20, "mult": 2 }
+          {
+            "hand": "pair",
+            "chips": 15,
+            "mult": 1
+          },
+          {
+            "hand": "flush",
+            "chips": 20,
+            "mult": 2
+          }
         ]
       }
     }

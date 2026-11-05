@@ -10,3 +10,4 @@ export * from './view';
 export * from './ai';
 export * from './power';
 export * from './validate';
+export * from './simulate';

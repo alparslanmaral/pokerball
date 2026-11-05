@@ -1,1 +1,527 @@
-[]
+[
+  {
+    "id": "gk-001",
+    "firstName": "Tomas",
+    "lastName": "Kralik",
+    "position": "GK",
+    "price": 8,
+    "trait": {
+      "type": "keeper_hand_bonus",
+      "params": {
+        "bonuses": [
+          {
+            "hand": "high_card",
+            "chips": 10,
+            "mult": 1
+          },
+          {
+            "hand": "pair",
+            "chips": 10,
+            "mult": 0
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gk-002",
+    "firstName": "Ivo",
+    "lastName": "Brandt",
+    "position": "GK",
+    "price": 5,
+    "trait": {
+      "type": "keeper_hand_bonus",
+      "params": {
+        "bonuses": [
+          {
+            "hand": "four_of_a_kind",
+            "chips": 60,
+            "mult": 4
+          },
+          {
+            "hand": "straight_flush",
+            "chips": 100,
+            "mult": 6
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gk-003",
+    "firstName": "Marek",
+    "lastName": "Sorel",
+    "position": "GK",
+    "price": 27,
+    "trait": {
+      "type": "keeper_hand_bonus",
+      "params": {
+        "bonuses": [
+          {
+            "hand": "three_of_a_kind",
+            "chips": 15,
+            "mult": 1
+          },
+          {
+            "hand": "straight",
+            "chips": 15,
+            "mult": 1
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gk-004",
+    "firstName": "Luca",
+    "lastName": "Verhaeg",
+    "position": "GK",
+    "price": 30,
+    "trait": {
+      "type": "keeper_hand_bonus",
+      "params": {
+        "bonuses": [
+          {
+            "hand": "two_pair",
+            "chips": 10,
+            "mult": 0
+          },
+          {
+            "hand": "full_house",
+            "chips": 20,
+            "mult": 1
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gk-005",
+    "firstName": "Oskar",
+    "lastName": "Hallin",
+    "position": "GK",
+    "price": 30,
+    "trait": {
+      "type": "keeper_hand_bonus",
+      "params": {
+        "bonuses": [
+          {
+            "hand": "pair",
+            "chips": 10,
+            "mult": 1
+          },
+          {
+            "hand": "two_pair",
+            "chips": 10,
+            "mult": 0
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gk-006",
+    "firstName": "Dario",
+    "lastName": "Fenwick",
+    "position": "GK",
+    "price": 46,
+    "trait": {
+      "type": "keeper_hand_bonus",
+      "params": {
+        "bonuses": [
+          {
+            "hand": "pair",
+            "chips": 15,
+            "mult": 1
+          },
+          {
+            "hand": "two_pair",
+            "chips": 15,
+            "mult": 1
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gk-007",
+    "firstName": "Anton",
+    "lastName": "Valk",
+    "position": "GK",
+    "price": 49,
+    "trait": {
+      "type": "keeper_hand_bonus",
+      "params": {
+        "bonuses": [
+          {
+            "hand": "two_pair",
+            "chips": 20,
+            "mult": 1
+          },
+          {
+            "hand": "flush",
+            "chips": 30,
+            "mult": 2
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gk-008",
+    "firstName": "Nico",
+    "lastName": "Baraldi",
+    "position": "GK",
+    "price": 55,
+    "trait": {
+      "type": "keeper_hand_bonus",
+      "params": {
+        "bonuses": [
+          {
+            "hand": "pair",
+            "chips": 25,
+            "mult": 2
+          },
+          {
+            "hand": "two_pair",
+            "chips": 20,
+            "mult": 1
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "def-001",
+    "firstName": "Felix",
+    "lastName": "Marchetti",
+    "position": "DEF",
+    "price": 9,
+    "trait": {
+      "type": "extra_discards",
+      "params": {
+        "amount": 1
+      }
+    }
+  },
+  {
+    "id": "def-002",
+    "firstName": "Bruno",
+    "lastName": "Castell",
+    "position": "DEF",
+    "price": 14,
+    "trait": {
+      "type": "chips_per_scoring_ace",
+      "params": {
+        "chips": 20
+      }
+    }
+  },
+  {
+    "id": "def-003",
+    "firstName": "Hugo",
+    "lastName": "Lindqvist",
+    "position": "DEF",
+    "price": 20,
+    "trait": {
+      "type": "chips_per_scoring_face",
+      "params": {
+        "chips": 8
+      }
+    }
+  },
+  {
+    "id": "def-004",
+    "firstName": "Pavel",
+    "lastName": "Nordin",
+    "position": "DEF",
+    "price": 25,
+    "trait": {
+      "type": "chips_per_scoring_face",
+      "params": {
+        "chips": 15
+      }
+    }
+  },
+  {
+    "id": "def-005",
+    "firstName": "Emil",
+    "lastName": "Rossetti",
+    "position": "DEF",
+    "price": 35,
+    "trait": {
+      "type": "mult_per_scoring_suit",
+      "params": {
+        "suit": "spades",
+        "mult": 1
+      }
+    }
+  },
+  {
+    "id": "def-006",
+    "firstName": "Ravi",
+    "lastName": "Okonkwo",
+    "position": "DEF",
+    "price": 41,
+    "trait": {
+      "type": "mult_per_unused_discard",
+      "params": {
+        "mult": 1
+      }
+    }
+  },
+  {
+    "id": "def-007",
+    "firstName": "Stefan",
+    "lastName": "Draganov",
+    "position": "DEF",
+    "price": 50,
+    "trait": {
+      "type": "mult_per_scoring_suit",
+      "params": {
+        "suit": "clubs",
+        "mult": 2
+      }
+    }
+  },
+  {
+    "id": "def-008",
+    "firstName": "Viktor",
+    "lastName": "Almeida",
+    "position": "DEF",
+    "price": 60,
+    "trait": {
+      "type": "mult_per_scoring_rank_group",
+      "params": {
+        "group": "even",
+        "mult": 2
+      }
+    }
+  },
+  {
+    "id": "mid-001",
+    "firstName": "Sven",
+    "lastName": "Aldridge",
+    "position": "MID",
+    "price": 9,
+    "trait": {
+      "type": "extra_discards",
+      "params": {
+        "amount": 1
+      }
+    }
+  },
+  {
+    "id": "mid-002",
+    "firstName": "Jonas",
+    "lastName": "Ekberg",
+    "position": "MID",
+    "price": 15,
+    "trait": {
+      "type": "chips_per_scoring_ace",
+      "params": {
+        "chips": 20
+      }
+    }
+  },
+  {
+    "id": "mid-003",
+    "firstName": "Mateo",
+    "lastName": "Quiroga",
+    "position": "MID",
+    "price": 22,
+    "trait": {
+      "type": "chips_per_scoring_face",
+      "params": {
+        "chips": 8
+      }
+    }
+  },
+  {
+    "id": "mid-004",
+    "firstName": "Remy",
+    "lastName": "Duclos",
+    "position": "MID",
+    "price": 24,
+    "trait": {
+      "type": "extra_hand_size",
+      "params": {
+        "amount": 1
+      }
+    }
+  },
+  {
+    "id": "mid-005",
+    "firstName": "Arda",
+    "lastName": "Yilmaz",
+    "position": "MID",
+    "price": 39,
+    "trait": {
+      "type": "mult_on_hand_type",
+      "params": {
+        "hands": [
+          "two_pair"
+        ],
+        "mult": 3
+      }
+    }
+  },
+  {
+    "id": "mid-006",
+    "firstName": "Kai",
+    "lastName": "Brenner",
+    "position": "MID",
+    "price": 35,
+    "trait": {
+      "type": "mult_if_cards_played_at_most",
+      "params": {
+        "n": 2,
+        "mult": 4
+      }
+    }
+  },
+  {
+    "id": "mid-007",
+    "firstName": "Zane",
+    "lastName": "Whitlock",
+    "position": "MID",
+    "price": 60,
+    "trait": {
+      "type": "mult_per_unused_discard",
+      "params": {
+        "mult": 2
+      }
+    }
+  },
+  {
+    "id": "mid-008",
+    "firstName": "Leon",
+    "lastName": "Petrov",
+    "position": "MID",
+    "price": 60,
+    "trait": {
+      "type": "mult_per_scoring_rank_group",
+      "params": {
+        "group": "odd",
+        "mult": 2
+      }
+    }
+  },
+  {
+    "id": "fwd-001",
+    "firstName": "Dante",
+    "lastName": "Moretti",
+    "position": "FWD",
+    "price": 14,
+    "trait": {
+      "type": "chips_per_scoring_ace",
+      "params": {
+        "chips": 20
+      }
+    }
+  },
+  {
+    "id": "fwd-002",
+    "firstName": "Niko",
+    "lastName": "Savic",
+    "position": "FWD",
+    "price": 9,
+    "trait": {
+      "type": "extra_discards",
+      "params": {
+        "amount": 1
+      }
+    }
+  },
+  {
+    "id": "fwd-003",
+    "firstName": "Teo",
+    "lastName": "Barros",
+    "position": "FWD",
+    "price": 25,
+    "trait": {
+      "type": "chips_per_scoring_face",
+      "params": {
+        "chips": 15
+      }
+    }
+  },
+  {
+    "id": "fwd-004",
+    "firstName": "Jakob",
+    "lastName": "Strand",
+    "position": "FWD",
+    "price": 22,
+    "trait": {
+      "type": "extra_hand_size",
+      "params": {
+        "amount": 1
+      }
+    }
+  },
+  {
+    "id": "fwd-005",
+    "firstName": "Rafa",
+    "lastName": "Delgado",
+    "position": "FWD",
+    "price": 41,
+    "trait": {
+      "type": "mult_if_cards_played_at_most",
+      "params": {
+        "n": 2,
+        "mult": 6
+      }
+    }
+  },
+  {
+    "id": "fwd-006",
+    "firstName": "Ilan",
+    "lastName": "Kessler",
+    "position": "FWD",
+    "price": 35,
+    "trait": {
+      "type": "mult_on_hand_type",
+      "params": {
+        "hands": [
+          "two_pair"
+        ],
+        "mult": 3
+      }
+    }
+  },
+  {
+    "id": "fwd-007",
+    "firstName": "Axel",
+    "lastName": "Ferreira",
+    "position": "FWD",
+    "price": 56,
+    "trait": {
+      "type": "xmult_on_hand_type",
+      "params": {
+        "hands": [
+          "two_pair",
+          "straight",
+          "flush"
+        ],
+        "xmult": 2.5
+      }
+    }
+  },
+  {
+    "id": "fwd-008",
+    "firstName": "Mika",
+    "lastName": "Tanaka",
+    "position": "FWD",
+    "price": 60,
+    "trait": {
+      "type": "mult_on_hand_type",
+      "params": {
+        "hands": [
+          "pair",
+          "two_pair"
+        ],
+        "mult": 6
+      }
+    }
+  }
+]

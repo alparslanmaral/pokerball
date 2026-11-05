@@ -35,12 +35,12 @@
     "minPrice": 5,
     "maxPrice": 60,
     "powerAtMinPrice": 0,
-    "powerAtMaxPrice": 0.6
+    "powerAtMaxPrice": 0.3
   },
-  "usageWeights": {
+  "priceWeights": {
     "GK": 1,
-    "DEF": 0.3,
-    "MID": 0.4,
-    "FWD": 0.3
+    "DEF": 0.65,
+    "MID": 0.75,
+    "FWD": 0.65
   }
 }

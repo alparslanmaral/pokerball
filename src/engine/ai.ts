@@ -115,6 +115,6 @@ export function aiNextAction(ctx: GameContext, state: MatchState, side: Side, rn
     case 'halftime':
       return s.continued ? null : { type: 'continue', side };
     case 'fulltime':
-      return null;
+      return s.rematch ? null : { type: 'rematch', side };
   }
 }

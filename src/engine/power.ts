@@ -32,9 +32,14 @@ export interface PowerStats {
   withTrait: number;
   /** Relative uplift of the average duel score, e.g. 0.25 = +25%. */
   uplift: number;
+  /** Probability that a duel hand with the trait beats a trait-less opponent hand (ties count half). */
+  winProb: number;
 }
 
-/** Average score with a trait vs. without any trait, over the same random hands (common random numbers). */
+/**
+ * Samples duel scores with and without the trait over the same random hands, then compares every
+ * with-trait score against every (other) trait-less score to get an exact win probability.
+ */
 export function measureTrait(
   ctx: GameContext,
   trait: Trait,
@@ -42,27 +47,61 @@ export function measureTrait(
   samples = 1500,
   seed = 12345,
 ): PowerStats {
-  let base = 0;
-  let withTrait = 0;
   const isKeeper = position === 'GK';
+  const base: number[] = [];
+  const withT: number[] = [];
   for (let i = 0; i < samples; i++) {
     const s = seed + i * 7919;
-    base += simulateDuelScore(ctx, new Rng(s), null, null);
-    withTrait += simulateDuelScore(ctx, new Rng(s), isKeeper ? null : trait, isKeeper ? trait : null);
+    base.push(simulateDuelScore(ctx, new Rng(s), null, null));
+    withT.push(simulateDuelScore(ctx, new Rng(s), isKeeper ? null : trait, isKeeper ? trait : null));
   }
-  base /= samples;
-  withTrait /= samples;
-  return { baseline: base, withTrait, uplift: withTrait / base - 1 };
+  const sum = (a: number[]) => a.reduce((x, y) => x + y, 0);
+  const sorted = base.slice().sort((a, b) => a - b);
+  const lower = (v: number) => {
+    let lo = 0;
+    let hi = sorted.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (sorted[mid] < v) lo = mid + 1;
+      else hi = mid;
+    }
+    return lo;
+  };
+  const upper = (v: number) => {
+    let lo = 0;
+    let hi = sorted.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (sorted[mid] <= v) lo = mid + 1;
+      else hi = mid;
+    }
+    return lo;
+  };
+  let score = 0;
+  withT.forEach((w, i) => {
+    const below = lower(w);
+    const ties = upper(w) - below;
+    score += below + ties * 0.5;
+    // Remove the pair (w_i, base_i): same cards, not an independent opponent.
+    score -= base[i] < w ? 1 : base[i] === w ? 0.5 : 0;
+  });
+  const winProb = score / (samples * (samples - 1));
+  const b = sum(base) / samples;
+  const w = sum(withT) / samples;
+  return { baseline: b, withTrait: w, uplift: w / b - 1, winProb };
 }
 
 /**
- * Usage-weighted power: uplift while the player is active, scaled by how often that position
- * is involved in a duel (keepers count in every duel).
+ * Power score = how much more often a duel is won thanks to the trait (0 = nothing, 1 = always),
+ * while the player is active, scaled by the position's price weight (keepers count in every duel).
  */
+export function powerFromStats(ctx: GameContext, position: Position, traitType: string, stats: PowerStats): number {
+  const tpl = ctx.catalog.find((t) => t.id === traitType);
+  return Math.max(0, 2 * (stats.winProb - 0.5)) * (ctx.balance.priceWeights[position] ?? 1) * (tpl?.powerWeight ?? 1);
+}
+
 export function powerScore(ctx: GameContext, player: Pick<Player, 'trait' | 'position'>, samples = 1500): number {
-  const stats = measureTrait(ctx, player.trait, player.position, samples);
-  const tpl = ctx.catalog.find((t) => t.id === player.trait.type);
-  return stats.uplift * (ctx.balance.usageWeights[player.position] ?? 1) * (tpl?.powerWeight ?? 1);
+  return powerFromStats(ctx, player.position, player.trait.type, measureTrait(ctx, player.trait, player.position, samples));
 }
 
 /** Maps a power score linearly onto the price range from balance.json. */

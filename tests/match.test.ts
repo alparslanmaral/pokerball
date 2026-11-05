@@ -329,7 +329,8 @@ describe('full match', () => {
   });
 
   it('rematch returns to transfer with a fresh market and reset scores', () => {
-    let s = playOut(3);
+    let s = structuredClone(playOut(3));
+    s.sides.A.rematch = s.sides.B.rematch = false; // the AI helper may already have voted
     const oldMarket = s.sides.A.market;
     s = play(ctx, s, { type: 'rematch', side: 'A' });
     expect(s.phase).toBe('fulltime');

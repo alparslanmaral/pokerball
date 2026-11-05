@@ -321,7 +321,7 @@ function resolveDuel(ctx: GameContext, d: MatchState, rng: Rng): void {
     }
   }
   d.node = nodeAfter;
-  d.reveal = { kind: 'duel', nodeBefore: node, nodeAfter, hands: results, winner, outcome };
+  d.reveal = { kind: 'duel', id: d.seq + 1, nodeBefore: node, nodeAfter, hands: results, winner, outcome };
   d.phase = 'reveal';
   d.deadline = null;
   d.sides.A.continued = d.sides.B.continued = false;
@@ -333,7 +333,7 @@ function resolveShot(ctx: GameContext, d: MatchState): void {
   const picks = { A: d.sides.A.shotPick!, B: d.sides.B.shotPick! };
   const goal = picks[shooter] !== picks[other(shooter)];
   if (goal) d.sides[shooter].goals++;
-  d.reveal = { kind: 'shot', shooter, picks, goal };
+  d.reveal = { kind: 'shot', id: d.seq + 1, shooter, picks, goal };
   d.shot = null;
   d.node = 0;
   d.phase = 'reveal';

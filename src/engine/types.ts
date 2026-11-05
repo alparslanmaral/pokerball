@@ -74,7 +74,7 @@ export interface Balance {
   cheapestSumCap: number;
   priceBands: PriceBand[];
   pricing: { minPrice: number; maxPrice: number; powerAtMinPrice: number; powerAtMaxPrice: number };
-  usageWeights: Record<Position, number>;
+  priceWeights: Record<Position, number>;
 }
 
 export type ParamDef =
@@ -154,6 +154,8 @@ export interface SideState {
 
 export interface DuelReveal {
   kind: 'duel';
+  /** Unique per reveal (UI animation key). */
+  id: number;
   nodeBefore: number;
   nodeAfter: number;
   hands: Record<Side, { cards: CardId[]; auto: boolean; result: ScoreResult }>;
@@ -163,6 +165,7 @@ export interface DuelReveal {
 
 export interface ShotReveal {
   kind: 'shot';
+  id: number;
   shooter: Side;
   picks: Record<Side, Zone>;
   goal: boolean;

@@ -16,45 +16,45 @@ const kb = (...b: [string, number, number][]) =>
   t('keeper_hand_bonus', { bonuses: b.map(([hand, chips, mult]) => ({ hand, chips, mult })) });
 
 const SEEDS: Seed[] = [
-  // ---- Goalkeepers -------------------------------------------------------------------------
-  ['GK', 'Tomas', 'Kralik', kb(['high_card', 10, 0], ['pair', 10, 1])],
-  ['GK', 'Ivo', 'Brandt', kb(['high_card', 8, 1], ['two_pair', 10, 0])],
-  ['GK', 'Marek', 'Sorel', kb(['pair', 15, 1], ['two_pair', 15, 1])],
-  ['GK', 'Luca', 'Verhaeg', kb(['pair', 10, 2], ['three_of_a_kind', 15, 1])],
-  ['GK', 'Oskar', 'Hallin', kb(['three_of_a_kind', 25, 2], ['straight', 20, 2])],
-  ['GK', 'Dario', 'Fenwick', kb(['two_pair', 20, 2], ['flush', 25, 2])],
-  ['GK', 'Anton', 'Valk', kb(['full_house', 40, 3], ['four_of_a_kind', 60, 4])],
-  ['GK', 'Nico', 'Baraldi', kb(['straight', 40, 4], ['straight_flush', 80, 6])],
+  // ---- Goalkeepers (rookie, rookie, mid, mid, star, star, legend, legend) ---------------------
+  ['GK', 'Tomas', 'Kralik', kb(['high_card', 10, 1], ['pair', 10, 0])],
+  ['GK', 'Ivo', 'Brandt', kb(['four_of_a_kind', 60, 4], ['straight_flush', 100, 6])],
+  ['GK', 'Marek', 'Sorel', kb(['three_of_a_kind', 15, 1], ['straight', 15, 1])],
+  ['GK', 'Luca', 'Verhaeg', kb(['two_pair', 10, 0], ['full_house', 20, 1])],
+  ['GK', 'Oskar', 'Hallin', kb(['pair', 10, 1], ['two_pair', 10, 0])],
+  ['GK', 'Dario', 'Fenwick', kb(['pair', 15, 1], ['two_pair', 15, 1])],
+  ['GK', 'Anton', 'Valk', kb(['two_pair', 20, 1], ['flush', 30, 2])],
+  ['GK', 'Nico', 'Baraldi', kb(['pair', 25, 2], ['two_pair', 20, 1])],
 
-  // ---- Defenders ---------------------------------------------------------------------------
-  ['DEF', 'Bruno', 'Castell', t('chips_per_scoring_face', { chips: 8 })],
-  ['DEF', 'Pavel', 'Nordin', t('chips_per_scoring_suit', { suit: 'clubs', chips: 10 })],
-  ['DEF', 'Emil', 'Rossetti', t('mult_per_scoring_rank_group', { group: 'even', mult: 1 })],
-  ['DEF', 'Hugo', 'Lindqvist', t('chips_on_hand_type', { hands: ['pair', 'two_pair'], chips: 25 })],
-  ['DEF', 'Ravi', 'Okonkwo', t('mult_on_hand_type', { hands: ['pair', 'three_of_a_kind'], mult: 4 })],
+  // ---- Defenders -----------------------------------------------------------------------------
   ['DEF', 'Felix', 'Marchetti', t('extra_discards', { amount: 1 })],
-  ['DEF', 'Stefan', 'Draganov', t('mult_per_scoring_suit', { suit: 'spades', mult: 2 })],
-  ['DEF', 'Viktor', 'Almeida', t('xmult_on_hand_type', { hands: ['pair', 'two_pair', 'three_of_a_kind'], xmult: 1.5 })],
+  ['DEF', 'Bruno', 'Castell', t('chips_per_scoring_ace', { chips: 20 })],
+  ['DEF', 'Hugo', 'Lindqvist', t('chips_per_scoring_face', { chips: 8 })],
+  ['DEF', 'Pavel', 'Nordin', t('chips_per_scoring_face', { chips: 15 })],
+  ['DEF', 'Emil', 'Rossetti', t('mult_per_scoring_suit', { suit: 'spades', mult: 1 })],
+  ['DEF', 'Ravi', 'Okonkwo', t('mult_per_unused_discard', { mult: 1 })],
+  ['DEF', 'Stefan', 'Draganov', t('mult_per_scoring_suit', { suit: 'clubs', mult: 2 })],
+  ['DEF', 'Viktor', 'Almeida', t('mult_per_scoring_rank_group', { group: 'even', mult: 2 })],
 
-  // ---- Midfielders -------------------------------------------------------------------------
+  // ---- Midfielders ---------------------------------------------------------------------------
+  ['MID', 'Sven', 'Aldridge', t('extra_discards', { amount: 1 })],
   ['MID', 'Jonas', 'Ekberg', t('chips_per_scoring_ace', { chips: 20 })],
-  ['MID', 'Mateo', 'Quiroga', t('chips_per_scoring_face', { chips: 10 })],
-  ['MID', 'Leon', 'Petrov', t('mult_per_scoring_suit', { suit: 'hearts', mult: 1 })],
-  ['MID', 'Kai', 'Brenner', t('mult_per_unused_discard', { mult: 1 })],
-  ['MID', 'Arda', 'Yilmaz', t('mult_on_hand_type', { hands: ['pair', 'two_pair'], mult: 4 })],
-  ['MID', 'Sven', 'Aldridge', t('extra_hand_size', { amount: 1 })],
-  ['MID', 'Remy', 'Duclos', t('mult_if_cards_played_at_most', { n: 2, mult: 4 })],
-  ['MID', 'Zane', 'Whitlock', t('xmult_on_hand_type', { hands: ['pair', 'two_pair', 'three_of_a_kind'], xmult: 1.5 })],
+  ['MID', 'Mateo', 'Quiroga', t('chips_per_scoring_face', { chips: 8 })],
+  ['MID', 'Remy', 'Duclos', t('extra_hand_size', { amount: 1 })],
+  ['MID', 'Arda', 'Yilmaz', t('mult_on_hand_type', { hands: ['two_pair'], mult: 3 })],
+  ['MID', 'Kai', 'Brenner', t('mult_if_cards_played_at_most', { n: 2, mult: 4 })],
+  ['MID', 'Zane', 'Whitlock', t('mult_per_unused_discard', { mult: 2 })],
+  ['MID', 'Leon', 'Petrov', t('mult_per_scoring_rank_group', { group: 'odd', mult: 2 })],
 
-  // ---- Forwards ----------------------------------------------------------------------------
+  // ---- Forwards ------------------------------------------------------------------------------
   ['FWD', 'Dante', 'Moretti', t('chips_per_scoring_ace', { chips: 20 })],
-  ['FWD', 'Niko', 'Savic', t('chips_per_scoring_suit', { suit: 'diamonds', chips: 10 })],
-  ['FWD', 'Teo', 'Barros', t('mult_per_scoring_rank_group', { group: 'odd', mult: 1 })],
-  ['FWD', 'Ilan', 'Kessler', t('chips_on_hand_type', { hands: ['straight', 'flush'], chips: 60 })],
-  ['FWD', 'Mika', 'Tanaka', t('mult_on_hand_type', { hands: ['two_pair', 'three_of_a_kind'], mult: 5 })],
-  ['FWD', 'Rafa', 'Delgado', t('mult_per_scoring_suit', { suit: 'hearts', mult: 2 })],
-  ['FWD', 'Jakob', 'Strand', t('mult_if_cards_played_at_most', { n: 2, mult: 5 })],
-  ['FWD', 'Axel', 'Ferreira', t('xmult_on_hand_type', { hands: ['flush', 'straight', 'full_house'], xmult: 1.8 })],
+  ['FWD', 'Niko', 'Savic', t('extra_discards', { amount: 1 })],
+  ['FWD', 'Teo', 'Barros', t('chips_per_scoring_face', { chips: 15 })],
+  ['FWD', 'Jakob', 'Strand', t('extra_hand_size', { amount: 1 })],
+  ['FWD', 'Rafa', 'Delgado', t('mult_if_cards_played_at_most', { n: 2, mult: 6 })],
+  ['FWD', 'Ilan', 'Kessler', t('mult_on_hand_type', { hands: ['two_pair'], mult: 3 })],
+  ['FWD', 'Axel', 'Ferreira', t('xmult_on_hand_type', { hands: ['two_pair', 'straight', 'flush'], xmult: 2.5 })],
+  ['FWD', 'Mika', 'Tanaka', t('mult_on_hand_type', { hands: ['pair', 'two_pair'], mult: 6 })],
 ];
 
 const dry = process.argv.includes('--dry');
