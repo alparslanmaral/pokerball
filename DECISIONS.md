@@ -81,3 +81,14 @@ Numbers come from `reports/balance.md` (`npm run sim`).
 31. **Opponent squad** is hidden during the transfer phase and visible afterwards (the duel panel also shows the opposing active player).
 32. **Names** are trimmed to 20 characters; duplicate names are allowed. The username doubles as team name and is saved in localStorage.
 33. **Sort buttons** (deal/rank/suit) were added to the hand for usability; they only reorder the display.
+
+## UI refresh, mobile and PWA
+
+34. **Icons instead of words** for chips / mult / score; the words inside generated trait descriptions are replaced by the icons at render time (`IconText`), so descriptions stay plain text in the data.
+    Chips = circle, mult = diamond with a bolt, score = star, so the meaning does not rely on colour alone.
+35. **Fonts are bundled** (`@fontsource-variable/inter`, `space-grotesk`) rather than loaded from Google Fonts: works offline, no third-party request, no layout shift.
+36. **Hand-written service worker** (build-time Vite plugin) instead of a PWA plugin: no dependency on a plugin supporting this Vite version, ~60 lines, easy to audit. Navigation is network-first
+    (new deploys show up immediately), hashed assets are cache-first, portraits stale-while-revalidate. `ignoreVary` is required because static hosts may send `Vary: Origin`, which otherwise made
+    module scripts miss the cache offline (found by the offline smoke test). Cross-origin traffic (PeerJS signalling) is never intercepted.
+37. **Update flow**: the new worker activates immediately (`skipWaiting`); if a page was already controlled, a toast asks the user to reload. The service worker is production-only, so `npm run dev` is never cached.
+38. **Mobile**: the Leave button becomes a small ✕ at the top right; the hand is a 4-column grid and Ready/Discard/Clear live in a sticky bar so they never scroll away; the sort buttons are hidden on phones to save space.

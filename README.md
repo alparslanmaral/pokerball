@@ -65,6 +65,21 @@ reports/       Generated balance report
   the opponent's played hand is revealed only once both sides are locked.
 * The same engine and UI are used in both modes.
 
+## Look & feel, mobile and PWA
+
+* Scores are shown with icons instead of words: a blue **poker chip** for chips, a red **bolt diamond** for mult and a gold
+  **star** for the final score (`[chip] 50 × [bolt] 4 = [star] 200`). The same icons replace the words "chips"/"mult" in trait text
+  and in the showdown breakdown (`src/ui/components/Icons.tsx`).
+* Theme: dark, glassy surfaces, Inter (UI) + Space Grotesk (numbers/headings), both self-hosted via `@fontsource` so they also work offline.
+  All colours/spacing are CSS variables at the top of `src/ui/styles.css`.
+* Mobile layout (< 720 px): compact scoreboard and pitch, side-by-side player tiles, a 4-column hand grid, a **sticky action bar**
+  (preview + Clear / Discard / Ready), bottom-sheet showdown, one-card-per-row transfer market, safe-area insets for notched phones.
+* **PWA**: `public/manifest.webmanifest`, icons in `public/icons/` and a service worker generated at build time
+  (`vite/pwa-plugin.ts`, output `dist/sw.js`). The app shell is precached (opens offline, single-player works offline), player portraits are cached
+  on first use, and each deploy gets a new cache version; an "A new version is ready" toast offers a reload. The lobby shows an **Install app**
+  button when the browser allows it (Chrome/Edge/Android; on iOS use Share → Add to Home Screen). The service worker is registered in production builds only.
+  Online play still needs a connection. Regenerate icons from `public/icons/icon.svg` with `node scripts/make-icons.mjs`.
+
 ## Online play
 
 * Create a room, share the 5-character code, the friend joins. Peer id is `pokerpitch-<code>`.
@@ -133,7 +148,7 @@ commit and push; the next deploy ships the new database to everyone.
 
 `npx playwright install chromium`, start `npm run dev`, then e.g. `node scripts/ui-fullmatch.mjs http://localhost:5173/ shots desktop`
 (plays a whole match through the real UI), `scripts/admin-smoke.mjs` (admin) or `scripts/online-smoke.mjs`
-(two browsers over WebRTC; run with a local broker, see above).
+(two browsers over WebRTC; run with a local broker, see above) and `scripts/pwa-smoke.mjs` (production preview: manifest, service worker, offline reload).
 
 ## License
 

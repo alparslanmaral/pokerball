@@ -8,6 +8,7 @@ import { Fulltime, Halftime } from './screens/EndScreens';
 import { Lobby } from './screens/Lobby';
 import { Match } from './screens/Match';
 import { Transfer } from './screens/Transfer';
+import { useUpdateReady } from './pwa';
 import { type Stats, loadStats, loadUsername, recordMatch, saveUsername } from './stats';
 
 type Pending = { kind: 'host'; code: string; open: boolean; cancel: () => void } | { kind: 'guest'; cancel: () => void } | null;
@@ -38,6 +39,7 @@ export function App() {
   );
 
   const name = username.trim();
+  const updateReady = useUpdateReady();
 
   const startSolo = () => {
     setNotice(null);
@@ -83,8 +85,19 @@ export function App() {
     }
   };
 
+  const toast = updateReady ? (
+    <div className="toast" role="status">
+      <span>A new version is ready.</span>
+      <button className="btn small primary" onClick={() => location.reload()}>
+        Reload
+      </button>
+    </div>
+  ) : null;
+
   if (transport)
     return (
+      <>
+      {toast}
       <Game
         transport={transport}
         stats={stats}
@@ -92,11 +105,13 @@ export function App() {
         onExit={() => leave()}
         onClosed={(reason) => leave(reason)}
       />
+      </>
     );
 
   if (pending)
     return (
       <div className="screen center-screen">
+        {toast}
         <div className="panel lobby">
           <h2>{pending.kind === 'host' ? 'Waiting for an opponent…' : 'Connecting…'}</h2>
           {pending.kind === 'host' && !pending.open && <p className="muted">Opening room…</p>}
@@ -121,6 +136,8 @@ export function App() {
     );
 
   return (
+    <>
+    {toast}
     <Lobby
       username={username}
       setUsername={setUsername}
@@ -131,6 +148,7 @@ export function App() {
       onCreate={startHost}
       onJoin={startJoin}
     />
+    </>
   );
 }
 
@@ -187,7 +205,8 @@ function Game({
   return (
     <>
       <button className="exit-btn" onClick={() => confirm('Leave the match? It will not be recorded.') && onExit()}>
-        ✕ Leave
+        <span aria-hidden>✕</span>
+        <span className="lbl"> Leave</span>
       </button>
       {view.phase === 'transfer' && <Transfer view={view} ctx={ctx} send={send} />}
       {(view.phase === 'duel' || view.phase === 'shot' || view.phase === 'reveal') && (

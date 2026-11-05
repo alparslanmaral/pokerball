@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { activePosition, describePlayerTrait, other, parseCard, previewSelection } from '../../engine';
 import type { CardId, ClientView, GameContext, Intent, Position, Zone } from '../../engine';
 import { CardFace } from '../components/CardFace';
+import { Calc, ClockIcon, DeckIcon, DiscardIcon, IconText, ShieldIcon } from '../components/Icons';
 import { PlayerCard } from '../components/PlayerCard';
 import { SquadModal } from '../components/SquadModal';
 import { useCountdown } from '../hooks';
@@ -20,6 +21,9 @@ export function myNode(view: ClientView, node = view.node): number {
   return view.me === 'A' ? node : -node;
 }
 
+export const fmt = (n: number): string =>
+  Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
+
 export function Match({ view, ctx, send, deadlineAt }: Props) {
   const [modal, setModal] = useState<'me' | 'opp' | null>(null);
   const me = view.me;
@@ -37,7 +41,7 @@ export function Match({ view, ctx, send, deadlineAt }: Props) {
         <SquadModal title={`${view.names[opp]}'s squad`} squad={view.oppSquad} ctx={ctx} onClose={() => setModal(null)} />
       )}
       {modal === 'me' && (
-        <SquadModal title={`${view.names[me]} (you) — your squad`} squad={view.squad} ctx={ctx} onClose={() => setModal(null)} />
+        <SquadModal title={`Your squad`} squad={view.squad} ctx={ctx} onClose={() => setModal(null)} />
       )}
     </div>
   );
@@ -50,43 +54,56 @@ function Scoreboard({ view, onOpenSquad }: { view: ClientView; onOpenSquad: (m: 
     <header className="scoreboard">
       <button className="team me" onClick={() => onOpenSquad('me')} title="View your squad">
         <span className="team-name">{view.names[me]}</span>
-        <span className="team-hint">your squad ▸</span>
+        <span className="team-hint">Your squad</span>
       </button>
       <div className="score">
-        <span className="goals">{view.goals[me]}</span>
-        <span className="dash">–</span>
-        <span className="goals">{view.goals[opp]}</span>
+        <div className="score-line">
+          <span className="goals">{view.goals[me]}</span>
+          <span className="dash">:</span>
+          <span className="goals">{view.goals[opp]}</span>
+        </div>
         <div className="meta">
-          Half {view.half} · Duel {Math.min(view.resolvedInHalf + (view.phase === 'duel' ? 1 : 0), view.duelsPerHalf)}/
-          {view.duelsPerHalf}
+          <span>{view.half === 1 ? '1st half' : '2nd half'}</span>
+          <span className="sep">•</span>
+          <span>
+            {Math.min(view.resolvedInHalf + (view.phase === 'duel' ? 1 : 0), view.duelsPerHalf)}/{view.duelsPerHalf}
+          </span>
         </div>
       </div>
       <button className="team opp" onClick={() => onOpenSquad('opp')} title="View their squad">
         <span className="team-name">{view.names[opp]}</span>
-        <span className="team-hint">◂ their squad</span>
+        <span className="team-hint">Their squad</span>
       </button>
     </header>
   );
 }
 
-const NODE_LABEL: Record<number, string> = { [-1]: 'Your DEF vs their FWD', 0: 'MID vs MID', 1: 'Your FWD vs their DEF' };
+const NODE_LABEL: Record<number, [string, string]> = {
+  [-1]: ['Your DEF vs their FWD', 'DEF · FWD'],
+  0: ['MID vs MID', 'MID · MID'],
+  1: ['Your FWD vs their DEF', 'FWD · DEF'],
+};
 
 function Pitch({ view }: { view: ClientView }) {
   const n = myNode(view);
-  const left = n === -1 ? 16 : n === 0 ? 50 : 84;
+  const pos = (k: number) => (k === -1 ? 16 : k === 0 ? 50 : 84);
   const active = view.phase === 'shot' ? (view.shooter === view.me ? 1 : -1) : n;
   return (
     <div className="pitch" aria-label="Pitch">
-      <div className="goalpost left">YOUR GOAL</div>
-      <div className="goalpost right">THEIR GOAL</div>
+      <div className="goalpost left" />
+      <div className="goalpost right" />
       <div className="midline" />
+      <div className="centercircle" />
       {[-1, 0, 1].map((k) => (
-        <div key={k} className={`node ${active === k ? 'active' : ''}`} style={{ left: `${k === -1 ? 16 : k === 0 ? 50 : 84}%` }}>
+        <div key={k} className={`node ${active === k ? 'active' : ''}`} style={{ left: `${pos(k)}%` }}>
           <span className="node-dot" />
-          <span className="node-label">{NODE_LABEL[k]}</span>
+          <span className="node-label">
+            <span className="full">{NODE_LABEL[k][0]}</span>
+            <span className="short">{NODE_LABEL[k][1]}</span>
+          </span>
         </div>
       ))}
-      <div className="ball" style={{ left: `${left}%` }}>
+      <div className="ball" style={{ left: `${pos(n)}%` }}>
         ⚽
       </div>
     </div>
@@ -111,22 +128,29 @@ function Arena({ view, ctx }: { view: ClientView; ctx: GameContext }) {
   return (
     <div className="arena">
       <div className="arena-side">
-        <div className="arena-title">{inShot && shooter ? (shooter === me ? 'Your shooter' : 'Your keeper') : `Your ${posOf(me)}`}</div>
+        <div className="arena-title">
+          {inShot && shooter ? (shooter === me ? 'Your shooter' : 'Your keeper') : `Your ${posOf(me)}`}
+        </div>
         {mine ? <PlayerCard player={ctx.players[mine]} ctx={ctx} compact /> : <div className="muted">—</div>}
-        {myKeeper && posOf(me) !== 'GK' && (
-          <div className="keeper-note" title="Your goalkeeper's passive bonuses apply to every duel">
-            <strong>🧤 {myKeeper.lastName}</strong>
-            <span>{describePlayerTrait(myKeeper, ctx)}</span>
-          </div>
-        )}
       </div>
-      <div className="arena-mid">
-        <div className="vs">VS</div>
+      <div className="vs" aria-hidden>
+        VS
       </div>
       <div className="arena-side right">
-        <div className="arena-title">{inShot && shooter ? (shooter === opp ? 'Their shooter' : 'Their keeper') : `Their ${posOf(opp)}`}</div>
+        <div className="arena-title">
+          {inShot && shooter ? (shooter === opp ? 'Their shooter' : 'Their keeper') : `Their ${posOf(opp)}`}
+        </div>
         {theirs ? <PlayerCard player={ctx.players[theirs]} ctx={ctx} compact /> : <div className="muted">—</div>}
       </div>
+      {myKeeper && posOf(me) !== 'GK' && (
+        <div className="keeper-note" title="Your goalkeeper's passive bonuses apply to every duel">
+          <ShieldIcon />
+          <span className="kn-name">{myKeeper.lastName}</span>
+          <span className="kn-desc">
+            <IconText text={describePlayerTrait(myKeeper, ctx).replace(/^Permanent bonuses for your team's hands: /, '')} />
+          </span>
+        </div>
+      )}
     </div>
   );
 }
@@ -150,7 +174,8 @@ function HandArea({ view, ctx, send, deadlineAt }: Props) {
   const shown = useMemo(() => {
     const h = view.hand.slice();
     if (sort === 'rank') h.sort((a, b) => parseCard(b).rank - parseCard(a).rank);
-    if (sort === 'suit') h.sort((a, b) => parseCard(a).suit.localeCompare(parseCard(b).suit) || parseCard(b).rank - parseCard(a).rank);
+    if (sort === 'suit')
+      h.sort((a, b) => parseCard(a).suit.localeCompare(parseCard(b).suit) || parseCard(b).rank - parseCard(a).rank);
     return h;
   }, [view.hand, sort]);
 
@@ -163,27 +188,36 @@ function HandArea({ view, ctx, send, deadlineAt }: Props) {
   };
   const oppName = view.names[other(view.me)];
   const canDiscard = !locked && selected.length > 0 && selected.length <= view.discardsLeft;
+  const urgent = left !== null && left < 5000;
 
-  let status: React.ReactNode = <span className="muted">Pick 1–5 cards. Only the cards that form the hand score.</span>;
+  let status: React.ReactNode = <span className="muted">Pick 1–5 cards — only the cards that form the hand score.</span>;
   if (locked && !view.oppLocked) status = <span>Locked in. Waiting for {oppName}…</span>;
   else if (!locked && view.oppLocked)
     status = (
-      <span className={left !== null && left < 5000 ? 'urgent' : ''}>
-        {oppName} is ready — you have <strong>{Math.ceil((left ?? 0) / 1000)}s</strong> (then your highest card is auto-played)
+      <span className={urgent ? 'urgent' : ''}>
+        {oppName} is ready — your highest card auto-plays when time runs out.
       </span>
     );
 
   return (
     <section className="hand-area">
-      <div className="hand-status">
+      <div className="hand-top">
         <div className="chips-row">
-          <span className="stat-chip">Deck {view.deckCount}</span>
-          <span className="stat-chip">Discards {view.discardsLeft}</span>
-          <span className={`stat-chip ${view.oppLocked ? 'ok' : ''}`}>
-            {oppName}: {view.oppLocked ? 'ready ✓' : 'thinking…'}
+          <span className="pill" title="Cards left in your deck">
+            <DeckIcon /> {view.deckCount}
+          </span>
+          <span className="pill" title="Discards left">
+            <DiscardIcon /> {view.discardsLeft}
+          </span>
+          <span className={`pill ${view.oppLocked ? 'ok' : ''}`}>
+            <span className={`dot ${view.oppLocked ? 'on' : 'pulse'}`} />
+            {oppName}
+            {view.oppLocked ? ' ready' : ' thinking'}
           </span>
           {left !== null && view.oppLocked !== locked && (
-            <span className={`stat-chip ${left < 5000 ? 'bad' : ''}`}>⏱ {Math.ceil(left / 1000)}s</span>
+            <span className={`pill timer ${urgent ? 'bad' : ''}`}>
+              <ClockIcon /> {Math.ceil(left / 1000)}s
+            </span>
           )}
         </div>
         <div className="status-line">{status}</div>
@@ -198,61 +232,56 @@ function HandArea({ view, ctx, send, deadlineAt }: Props) {
             dimmed={locked && !played.includes(id)}
             scoring={!!preview && preview.scoring.includes(id)}
             onClick={locked ? undefined : () => toggle(id)}
-            style={{ animationDelay: `${i * 40}ms` }}
+            style={{ animationDelay: `${i * 35}ms` }}
           />
         ))}
       </div>
 
-      <div className="preview">
-        {preview ? (
-          <>
-            <span className="preview-hand">{ctx.balance.hands[preview.hand].label}</span>
-            <span className="preview-score">
-              <span className="chips">{fmt(preview.chips)}</span> × <span className="mult">{fmt(preview.mult)}</span> ={' '}
-              <strong>{fmt(preview.score)}</strong>
-            </span>
-          </>
-        ) : (
-          <span className="muted">Select cards to preview your score</span>
-        )}
-      </div>
-
-      <div className="controls">
-        <div className="sort">
-          <span className="muted">Sort</span>
-          {(['deal', 'rank', 'suit'] as SortMode[]).map((m) => (
-            <button key={m} className={`btn tiny ${sort === m ? 'active' : ''}`} onClick={() => setSort(m)}>
-              {m}
-            </button>
-          ))}
+      <div className="action-bar">
+        <div className="preview">
+          {preview ? (
+            <>
+              <span className="preview-hand">{ctx.balance.hands[preview.hand].label}</span>
+              <Calc chips={fmt(preview.chips)} mult={fmt(preview.mult)} score={fmt(preview.score)} />
+            </>
+          ) : (
+            <span className="muted">Select cards to preview your score</span>
+          )}
         </div>
-        <button className="btn" disabled={locked || selected.length === 0} onClick={() => setSelected([])}>
-          Clear
-        </button>
-        <button
-          className="btn"
-          disabled={!canDiscard}
-          title={`Replace the selected cards (${view.discardsLeft} discard${view.discardsLeft === 1 ? '' : 's'} left)`}
-          onClick={() => {
-            send({ type: 'discard', cards: selected });
-            setSelected([]);
-          }}
-        >
-          Discard {selected.length > 0 ? `(${selected.length})` : ''}
-        </button>
-        <button
-          className="btn primary big"
-          disabled={locked || selected.length < 1 || selected.length > max}
-          onClick={() => send({ type: 'lock', cards: selected })}
-        >
-          {locked ? 'Ready ✓' : 'Ready'}
-        </button>
+        <div className="controls">
+          <div className="sort" role="group" aria-label="Sort hand">
+            {(['deal', 'rank', 'suit'] as SortMode[]).map((m) => (
+              <button key={m} className={`seg ${sort === m ? 'active' : ''}`} onClick={() => setSort(m)}>
+                {m}
+              </button>
+            ))}
+          </div>
+          <button className="btn" disabled={locked || selected.length === 0} onClick={() => setSelected([])}>
+            Clear
+          </button>
+          <button
+            className="btn"
+            disabled={!canDiscard}
+            title={`Replace the selected cards (${view.discardsLeft} left)`}
+            onClick={() => {
+              send({ type: 'discard', cards: selected });
+              setSelected([]);
+            }}
+          >
+            <DiscardIcon /> Discard{selected.length > 0 ? ` ${selected.length}` : ''}
+          </button>
+          <button
+            className="btn primary"
+            disabled={locked || selected.length < 1 || selected.length > max}
+            onClick={() => send({ type: 'lock', cards: selected })}
+          >
+            {locked ? 'Ready ✓' : 'Ready'}
+          </button>
+        </div>
       </div>
     </section>
   );
 }
-
-export const fmt = (n: number): string => (Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/0+$/, '').replace(/\.$/, ''));
 
 const ZONE_LABEL: Record<Zone, string> = { left: 'Left', center: 'Center', right: 'Right' };
 
@@ -263,9 +292,9 @@ function ShotArea({ view, send, deadlineAt }: Props) {
   const zones: Zone[] = ['left', 'center', 'right'];
   return (
     <section className="shot-area">
-      <h3>{shooting ? 'Penalty chance! Pick where to shoot' : `${oppName} is shooting! Pick where to dive`}</h3>
+      <h3>{shooting ? 'Penalty chance — pick where to shoot' : `${oppName} is shooting — pick where to dive`}</h3>
       <p className="muted">
-        {shooting ? 'Score if the keeper guesses a different zone.' : 'Save it by guessing the same zone as the shooter.'}
+        {shooting ? 'You score if the keeper picks a different zone.' : 'Save it by choosing the same zone as the shooter.'}
       </p>
       <div className="goal-frame">
         {zones.map((z) => (

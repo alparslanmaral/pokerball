@@ -1,7 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { type ReactNode, useEffect, useRef } from 'react';
 import { other } from '../../engine';
 import type { ClientView, DuelReveal, GameContext, Intent, ShotReveal, Side, Zone } from '../../engine';
 import { CardFace } from '../components/CardFace';
+import { CardsIcon, ScoreIcon, ShieldIcon, SpadeIcon, Stat, UserIcon, ChipIcon, MultIcon } from '../components/Icons';
 import { useCountUp, useSteps } from '../hooks';
 
 interface Props {
@@ -60,7 +61,13 @@ function fmt(n: number): string {
   return Number.isInteger(n) ? String(Math.round(n)) : n.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
 }
 
-const SOURCE_LABEL: Record<string, string> = { hand: 'Hand', cards: 'Scoring cards', keeper: 'Keeper', trait: 'Player trait' };
+const SOURCE_ICON: Record<string, ReactNode> = {
+  hand: <SpadeIcon />,
+  cards: <CardsIcon />,
+  keeper: <ShieldIcon />,
+  trait: <UserIcon />,
+};
+const SOURCE_TITLE: Record<string, string> = { hand: 'Hand', cards: 'Scoring cards', keeper: 'Keeper', trait: 'Player trait' };
 
 function DuelReveal({ r, view, ctx }: { r: DuelReveal; view: ClientView; ctx: GameContext }) {
   const step = useSteps(DUEL_STEPS, r.id);
@@ -159,19 +166,34 @@ function ResultColumn({
         {auto && <span className="auto-tag"> · auto-played (time ran out)</span>}
       </div>
       <div className="reveal-calc">
-        <span className="chips">{step >= 2 ? fmt(chips) : '–'}</span>
-        <span> × </span>
-        <span className="mult">{step >= 3 ? fmt(mult) : '–'}</span>
+        <Stat kind="chips" value={step >= 2 ? fmt(chips) : '–'} className={step >= 2 ? 'pop' : 'idle'} />
+        <span className="op">×</span>
+        <Stat kind="mult" value={step >= 3 ? fmt(mult) : '–'} className={step >= 3 ? 'pop' : 'idle'} />
       </div>
-      <div className={`reveal-score ${step >= 4 ? 'show' : ''}`}>{step >= 4 ? fmt(score) : ''}</div>
+      <div className={`reveal-score ${step >= 4 ? 'show' : ''}`}>
+        <ScoreIcon />
+        <span>{step >= 4 ? fmt(score) : ''}</span>
+      </div>
       <ul className={`reveal-breakdown ${step >= 2 ? 'show' : ''}`}>
         {result.breakdown.map((b, i) => (
-          <li key={i}>
-            <span>{SOURCE_LABEL[b.source] ?? b.source}</span>
-            <span>
-              {b.chips ? `+${fmt(b.chips)} chips ` : ''}
-              {b.mult ? `+${fmt(b.mult)} mult ` : ''}
-              {b.xmult !== 1 ? `×${fmt(b.xmult)}` : ''}
+          <li key={i} title={SOURCE_TITLE[b.source]}>
+            <span className="src">{SOURCE_ICON[b.source]}</span>
+            <span className="vals">
+              {b.chips !== 0 && (
+                <span className="v chips">
+                  <ChipIcon />+{fmt(b.chips)}
+                </span>
+              )}
+              {b.mult !== 0 && (
+                <span className="v mult">
+                  <MultIcon />+{fmt(b.mult)}
+                </span>
+              )}
+              {b.xmult !== 1 && (
+                <span className="v mult">
+                  <MultIcon />×{fmt(b.xmult)}
+                </span>
+              )}
             </span>
           </li>
         ))}

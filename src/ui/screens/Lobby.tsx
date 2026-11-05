@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { dbVersionHash } from '../../data';
 import type { Stats } from '../stats';
+import { useInstallPrompt } from '../pwa';
 import { StatsTable } from './EndScreens';
 
 interface Props {
@@ -16,6 +17,7 @@ interface Props {
 
 export function Lobby({ username, setUsername, stats, notice, busy, onSolo, onCreate, onJoin }: Props) {
   const [code, setCode] = useState('');
+  const { install } = useInstallPrompt();
   const name = username.trim();
   const ok = name.length >= 1;
   return (
@@ -60,6 +62,11 @@ export function Lobby({ username, setUsername, stats, notice, busy, onSolo, onCr
           </div>
         </div>
 
+        {install && (
+          <button className="btn install" onClick={() => void install()}>
+            Install app
+          </button>
+        )}
         <StatsTable stats={stats} title="Your record (this browser only)" />
         <div className="muted footnote">
           Online play uses peer-to-peer WebRTC; some strict networks may block the connection. Game data v{dbVersionHash}
