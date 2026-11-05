@@ -8,7 +8,19 @@ import type { GameTransport } from './transport';
  * PeerJS (WebRTC) glue. Uses the public PeerJS broker for signalling and public STUN servers only:
  * there is no TURN relay, so some strict networks (corporate / carrier-grade NAT) cannot connect.
  */
+// Optional self-hosted broker, e.g. VITE_PEER_HOST=localhost VITE_PEER_PORT=9000 VITE_PEER_SECURE=false
+const env = import.meta.env as Record<string, string | undefined>;
+const BROKER = env.VITE_PEER_HOST
+  ? {
+      host: env.VITE_PEER_HOST,
+      port: Number(env.VITE_PEER_PORT ?? 443),
+      path: env.VITE_PEER_PATH ?? '/',
+      secure: env.VITE_PEER_SECURE !== 'false',
+    }
+  : {};
+
 const PEER_CONFIG = {
+  ...BROKER,
   config: {
     iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:global.stun.twilio.com:3478' }],
   },
