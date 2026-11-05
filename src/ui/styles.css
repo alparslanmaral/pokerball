@@ -1271,6 +1271,15 @@ select:focus {
 /* ---------- Mobile ---------- */
 
 @media (max-width: 720px) {
+  .exit-btn {
+    top: auto;
+    bottom: 8px;
+    left: 8px;
+    right: auto;
+  }
+  .screen {
+    padding-bottom: 56px;
+  }
   .team-name {
     font-size: 15px;
     max-width: 12ch;

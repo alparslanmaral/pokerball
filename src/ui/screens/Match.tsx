@@ -113,7 +113,7 @@ function Arena({ view, ctx }: { view: ClientView; ctx: GameContext }) {
       <div className="arena-side">
         <div className="arena-title">{inShot && shooter ? (shooter === me ? 'Your shooter' : 'Your keeper') : `Your ${posOf(me)}`}</div>
         {mine ? <PlayerCard player={ctx.players[mine]} ctx={ctx} compact /> : <div className="muted">—</div>}
-        {myKeeper && (
+        {myKeeper && posOf(me) !== 'GK' && (
           <div className="keeper-note" title="Your goalkeeper's passive bonuses apply to every duel">
             <strong>🧤 {myKeeper.lastName}</strong>
             <span>{describePlayerTrait(myKeeper, ctx)}</span>
