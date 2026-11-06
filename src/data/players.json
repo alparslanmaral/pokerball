@@ -1,8 +1,8 @@
 [
   {
     "id": "gk-001",
-    "firstName": "Tomas",
-    "lastName": "Kralik",
+    "firstName": "Test",
+    "lastName": "Moraes",
     "position": "GK",
     "price": 8,
     "trait": {
@@ -73,7 +73,7 @@
   },
   {
     "id": "gk-004",
-    "firstName": "Luca",
+    "firstName": "Asd",
     "lastName": "Verhaeg",
     "position": "GK",
     "price": 30,
@@ -169,10 +169,10 @@
   },
   {
     "id": "gk-008",
-    "firstName": "Nico",
-    "lastName": "Baraldi",
+    "firstName": "Ederson",
+    "lastName": "Moraes",
     "position": "GK",
-    "price": 55,
+    "price": 54,
     "trait": {
       "type": "keeper_hand_bonus",
       "params": {
@@ -286,15 +286,18 @@
   },
   {
     "id": "def-008",
-    "firstName": "Viktor",
-    "lastName": "Almeida",
+    "firstName": "Olivia",
+    "lastName": "Martin",
     "position": "DEF",
-    "price": 60,
+    "price": 26,
     "trait": {
-      "type": "mult_per_scoring_rank_group",
+      "type": "mult_on_hand_type",
       "params": {
-        "group": "even",
-        "mult": 2
+        "hands": [
+          "full_house",
+          "straight"
+        ],
+        "mult": 10
       }
     }
   },
@@ -395,14 +398,13 @@
   },
   {
     "id": "mid-008",
-    "firstName": "Leon",
-    "lastName": "Petrov",
+    "firstName": "Dusan",
+    "lastName": "Tadic",
     "position": "MID",
-    "price": 60,
+    "price": 31,
     "trait": {
-      "type": "mult_per_scoring_rank_group",
+      "type": "mult_per_unused_discard",
       "params": {
-        "group": "odd",
         "mult": 2
       }
     }
@@ -466,59 +468,53 @@
     "position": "FWD",
     "price": 41,
     "trait": {
-      "type": "mult_if_cards_played_at_most",
+      "type": "chips_per_scoring_suit",
       "params": {
-        "n": 2,
-        "mult": 6
+        "suit": "spades",
+        "chips": 15
       }
     }
   },
   {
     "id": "fwd-006",
-    "firstName": "Ilan",
-    "lastName": "Kessler",
+    "firstName": "Edin",
+    "lastName": "Dzeko",
     "position": "FWD",
-    "price": 35,
+    "price": 31,
     "trait": {
-      "type": "mult_on_hand_type",
+      "type": "mult_if_cards_played_at_most",
       "params": {
-        "hands": [
-          "two_pair"
-        ],
+        "n": 3,
         "mult": 3
       }
     }
   },
   {
     "id": "fwd-007",
-    "firstName": "Axel",
-    "lastName": "Ferreira",
+    "firstName": "Mason",
+    "lastName": "Greenwood",
     "position": "FWD",
-    "price": 56,
+    "price": 52,
     "trait": {
-      "type": "xmult_on_hand_type",
+      "type": "mult_per_scoring_suit",
       "params": {
-        "hands": [
-          "two_pair",
-          "straight",
-          "flush"
-        ],
-        "xmult": 2.5
+        "suit": "hearts",
+        "mult": 4
       }
     }
   },
   {
     "id": "fwd-008",
-    "firstName": "Mika",
-    "lastName": "Tanaka",
+    "firstName": "Alp",
+    "lastName": "Maral",
     "position": "FWD",
-    "price": 60,
+    "price": 25,
     "trait": {
       "type": "mult_on_hand_type",
       "params": {
         "hands": [
-          "pair",
-          "two_pair"
+          "flush",
+          "three_of_a_kind"
         ],
         "mult": 6
       }

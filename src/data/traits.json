@@ -97,7 +97,7 @@
       "mult": {
         "type": "number",
         "min": 1,
-        "max": 2,
+        "max": 5,
         "step": 1,
         "default": 1
       }
@@ -184,7 +184,7 @@
       "mult": {
         "type": "number",
         "min": 2,
-        "max": 8,
+        "max": 20,
         "step": 1,
         "default": 4
       }
