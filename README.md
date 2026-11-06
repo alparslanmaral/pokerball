@@ -134,15 +134,35 @@ HTML entry outside `src/`; neither it nor the API exists in `npm run build` outp
   measures candidate traits; `npx tsx scripts/format-data.ts` rewrites the data files in the admin's stable format.
 * Design decisions made while implementing are in [DECISIONS.md](DECISIONS.md).
 
-## Deploying to GitHub Pages
+## Deploying (free, no GitHub Actions needed)
 
-1. Push the repository to GitHub.
-2. In the repository **Settings → Pages**, set **Source** to **GitHub Actions**.
-3. Push to `main`. `.github/workflows/deploy.yml` runs the tests, builds (`dist/`) and deploys.
+The game is a plain static site (`npm run build` → `dist/`). Hosting does not affect online play: matchmaking uses the public
+PeerJS broker and players connect peer-to-peer over WebRTC. The host only needs to serve the files over **HTTPS** (all options below do).
 
-The build uses a relative `base` (`./`), so it works from `https://<user>.github.io/<repo>/` without configuration.
-Set `BASE_PATH=/<repo>/` when building if you prefer absolute asset paths. After editing players in `/admin`,
-commit and push; the next deploy ships the new database to everyone.
+**Option A — Cloudflare Pages (recommended: free, unlimited bandwidth, builds on their servers)**
+1. dash.cloudflare.com → *Workers & Pages* → *Create* → *Pages* → *Connect to Git* → pick this repository.
+2. Build command `npm run build`, output directory `dist`, environment variable `NODE_VERSION=22` (the repo's `.node-version` also sets it).
+3. Every push to `main` redeploys. You get `https://<project>.pages.dev`.
+
+**Option B — Netlify**: *Add new site → Import from Git*. `netlify.toml` already contains the settings.
+(Or drag the `dist/` folder onto https://app.netlify.com/drop — no Git at all.)
+
+**Option C — Vercel**: *Add New → Project*, framework preset *Vite*, defaults are fine.
+
+**Option D — deploy from your machine, no CI and no Git integration**
+```bash
+npm run build
+npx wrangler pages deploy dist --project-name poker-pitch     # Cloudflare (free account, `wrangler login` once)
+# or: npx netlify-cli deploy --dir=dist --prod
+# or: npx surge dist poker-pitch.surge.sh
+```
+
+**GitHub Pages** still works (`.github/workflows/deploy.yml`), but the free tier needs a public repository and uses Actions minutes.
+If you do not want it, delete that workflow file. After editing players in `/admin`, commit and push; the host rebuilds and ships the new database
+(or rebuild + redeploy with option D).
+
+`public/_headers` keeps `sw.js`, `index.html` and the manifest uncached on Cloudflare/Netlify so installed PWAs pick up new versions, and caches hashed assets forever.
+The build uses a relative `base` (`./`), so it works at a domain root or under a sub-path. Set `BASE_PATH=/<path>/` for absolute asset paths.
 
 ## Optional browser smoke tests
 
