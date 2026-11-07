@@ -1,18 +1,19 @@
 [
   {
     "id": "gk-001",
-    "firstName": "Test",
-    "lastName": "Moraes",
+    "firstName": "Millie",
+    "lastName": "Martin",
     "position": "GK",
     "price": 8,
+    "image": "players/gk-001.webp",
     "trait": {
       "type": "keeper_hand_bonus",
       "params": {
         "bonuses": [
           {
             "hand": "high_card",
-            "chips": 10,
-            "mult": 1
+            "chips": 20,
+            "mult": 2
           },
           {
             "hand": "pair",
@@ -120,30 +121,6 @@
     }
   },
   {
-    "id": "gk-006",
-    "firstName": "Dario",
-    "lastName": "Fenwick",
-    "position": "GK",
-    "price": 46,
-    "trait": {
-      "type": "keeper_hand_bonus",
-      "params": {
-        "bonuses": [
-          {
-            "hand": "pair",
-            "chips": 15,
-            "mult": 1
-          },
-          {
-            "hand": "two_pair",
-            "chips": 15,
-            "mult": 1
-          }
-        ]
-      }
-    }
-  },
-  {
     "id": "gk-007",
     "firstName": "Anton",
     "lastName": "Valk",
@@ -173,6 +150,7 @@
     "lastName": "Moraes",
     "position": "GK",
     "price": 54,
+    "image": "players/gk-008.webp",
     "trait": {
       "type": "keeper_hand_bonus",
       "params": {
@@ -231,19 +209,6 @@
     }
   },
   {
-    "id": "def-004",
-    "firstName": "Pavel",
-    "lastName": "Nordin",
-    "position": "DEF",
-    "price": 25,
-    "trait": {
-      "type": "chips_per_scoring_face",
-      "params": {
-        "chips": 15
-      }
-    }
-  },
-  {
     "id": "def-005",
     "firstName": "Emil",
     "lastName": "Rossetti",
@@ -259,10 +224,11 @@
   },
   {
     "id": "def-006",
-    "firstName": "Ravi",
-    "lastName": "Okonkwo",
+    "firstName": "Archie",
+    "lastName": "Brown",
     "position": "DEF",
-    "price": 41,
+    "price": 35,
+    "image": "players/def-006.webp",
     "trait": {
       "type": "mult_per_unused_discard",
       "params": {
@@ -272,10 +238,11 @@
   },
   {
     "id": "def-007",
-    "firstName": "Stefan",
-    "lastName": "Draganov",
+    "firstName": "Milan",
+    "lastName": "Skriniar",
     "position": "DEF",
     "price": 50,
+    "image": "players/def-007.webp",
     "trait": {
       "type": "mult_per_scoring_suit",
       "params": {
@@ -290,6 +257,7 @@
     "lastName": "Martin",
     "position": "DEF",
     "price": 26,
+    "image": "players/def-008.webp",
     "trait": {
       "type": "mult_on_hand_type",
       "params": {
@@ -371,28 +339,30 @@
   },
   {
     "id": "mid-006",
-    "firstName": "Kai",
-    "lastName": "Brenner",
+    "firstName": "Matteo",
+    "lastName": "Guendouzi",
     "position": "MID",
     "price": 35,
+    "image": "players/mid-006.webp",
     "trait": {
       "type": "mult_if_cards_played_at_most",
       "params": {
-        "n": 2,
-        "mult": 4
+        "n": 3,
+        "mult": 3
       }
     }
   },
   {
     "id": "mid-007",
-    "firstName": "Zane",
-    "lastName": "Whitlock",
+    "firstName": "Ngolo",
+    "lastName": "Kante",
     "position": "MID",
-    "price": 60,
+    "price": 54,
+    "image": "players/mid-007.webp",
     "trait": {
       "type": "mult_per_unused_discard",
       "params": {
-        "mult": 2
+        "mult": 3
       }
     }
   },
@@ -401,24 +371,12 @@
     "firstName": "Dusan",
     "lastName": "Tadic",
     "position": "MID",
-    "price": 31,
+    "price": 44,
+    "image": "players/mid-008.webp",
     "trait": {
       "type": "mult_per_unused_discard",
       "params": {
         "mult": 2
-      }
-    }
-  },
-  {
-    "id": "fwd-001",
-    "firstName": "Dante",
-    "lastName": "Moretti",
-    "position": "FWD",
-    "price": 14,
-    "trait": {
-      "type": "chips_per_scoring_ace",
-      "params": {
-        "chips": 20
       }
     }
   },
@@ -449,24 +407,12 @@
     }
   },
   {
-    "id": "fwd-004",
-    "firstName": "Jakob",
-    "lastName": "Strand",
-    "position": "FWD",
-    "price": 22,
-    "trait": {
-      "type": "extra_hand_size",
-      "params": {
-        "amount": 1
-      }
-    }
-  },
-  {
     "id": "fwd-005",
-    "firstName": "Rafa",
-    "lastName": "Delgado",
+    "firstName": "Vedat",
+    "lastName": "Muriqi",
     "position": "FWD",
-    "price": 41,
+    "price": 25,
+    "image": "players/fwd-005.webp",
     "trait": {
       "type": "chips_per_scoring_suit",
       "params": {
@@ -481,6 +427,7 @@
     "lastName": "Dzeko",
     "position": "FWD",
     "price": 31,
+    "image": "players/fwd-006.webp",
     "trait": {
       "type": "mult_if_cards_played_at_most",
       "params": {
@@ -495,6 +442,7 @@
     "lastName": "Greenwood",
     "position": "FWD",
     "price": 52,
+    "image": "players/fwd-007.webp",
     "trait": {
       "type": "mult_per_scoring_suit",
       "params": {
@@ -509,6 +457,7 @@
     "lastName": "Maral",
     "position": "FWD",
     "price": 25,
+    "image": "players/fwd-008.webp",
     "trait": {
       "type": "mult_on_hand_type",
       "params": {

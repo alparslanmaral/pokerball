@@ -234,7 +234,7 @@
       "mult": {
         "type": "number",
         "min": 1,
-        "max": 2,
+        "max": 5,
         "step": 1,
         "default": 1
       }
