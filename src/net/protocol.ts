@@ -1,16 +1,19 @@
-import type { ClientView, Intent } from '../engine';
+import type { ClientView, Intent, TIntent, TournamentView } from '../engine';
 
 /** Wire protocol between the room creator (host, authoritative) and the guest. */
 export type Msg =
   | { t: 'hello'; v: number; username: string; hash: string }
-  | { t: 'welcome'; username: string }
-  | { t: 'reject'; reason: 'version' | 'full' | 'protocol'; message: string }
+  | { t: 'welcome'; username: string; mode?: 'match' | 'tournament' }
+  | { t: 'reject'; reason: 'version' | 'full' | 'protocol' | 'started'; message: string }
   | { t: 'intent'; intent: Intent }
   | { t: 'view'; view: ClientView }
+  | { t: 'tintent'; intent: TIntent }
+  | { t: 'tview'; view: TournamentView }
   | { t: 'ping' }
   | { t: 'bye' };
 
-export const PROTOCOL_VERSION = 1;
+// v2: tournament mode (welcome.mode, tintent/tview messages).
+export const PROTOCOL_VERSION = 2;
 
 /** Minimal duplex message channel: implemented by PeerJS in the browser and by memory pairs in tests. */
 export interface Channel {

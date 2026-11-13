@@ -68,11 +68,23 @@ function newSide(name: string, market: Market): SideState {
   };
 }
 
-export function createMatch(ctx: GameContext, opts: { seed: number; names: Record<Side, string> }): MatchState {
+export interface CreateMatchOptions {
+  seed: number;
+  names: Record<Side, string>;
+  /** Pre-built squads (tournament): the transfer phase is skipped and the first duel is dealt immediately. */
+  squads?: Record<Side, Squad>;
+  /** Knockout rules: a match that is level after full time is decided by a penalty shootout. */
+  knockout?: boolean;
+}
+
+const noMarket = (): Market => ({ GK: [], DEF: [], MID: [], FWD: [] });
+
+export function createMatch(ctx: GameContext, opts: CreateMatchOptions): MatchState {
   const rng = new Rng(opts.seed);
-  const marketA = generateMarket(ctx, rng);
-  const marketB = generateMarket(ctx, rng);
-  return {
+  const prebuilt = !!opts.squads;
+  const marketA = prebuilt ? noMarket() : generateMarket(ctx, rng);
+  const marketB = prebuilt ? noMarket() : generateMarket(ctx, rng);
+  const state: MatchState = {
     phase: 'transfer',
     half: 1,
     node: 0,
@@ -80,11 +92,24 @@ export function createMatch(ctx: GameContext, opts: { seed: number; names: Recor
     resolvedTotal: 0,
     sides: { A: newSide(opts.names.A, marketA), B: newSide(opts.names.B, marketB) },
     shot: null,
+    knockout: !!opts.knockout,
+    shootout: null,
+    winner: null,
     reveal: null,
     deadline: null,
     seq: 0,
     rng: rng.s,
   };
+  if (opts.squads) {
+    for (const side of ['A', 'B'] as const) {
+      state.sides[side].squad = { ...opts.squads[side] };
+      state.sides[side].transferReady = true;
+    }
+    restoreDecks(state, rng);
+    startDuel(ctx, state, rng);
+    state.rng = rng.s;
+  }
+  return state;
 }
 
 // ---------------------------------------------------------------------------
@@ -260,7 +285,7 @@ function handle(ctx: GameContext, d: MatchState, a: Action, rng: Rng): boolean {
       return true;
     }
     case 'rematch': {
-      if (d.phase !== 'fulltime') return false;
+      if (d.phase !== 'fulltime' || d.knockout) return false;
       const s = d.sides[a.side];
       if (s.rematch) return false;
       s.rematch = true;
@@ -332,9 +357,12 @@ function resolveShot(ctx: GameContext, d: MatchState): void {
   const shooter = d.shot!.shooter;
   const picks = { A: d.sides.A.shotPick!, B: d.sides.B.shotPick! };
   const goal = picks[shooter] !== picks[other(shooter)];
-  if (goal) d.sides[shooter].goals++;
-  d.reveal = { kind: 'shot', id: d.seq + 1, shooter, picks, goal };
+  const penalty = d.shootout !== null;
+  if (d.shootout) d.shootout.kicks.push({ shooter, goal });
+  else if (goal) d.sides[shooter].goals++;
+  d.reveal = penalty ? { kind: 'shot', id: d.seq + 1, shooter, picks, goal, penalty } : { kind: 'shot', id: d.seq + 1, shooter, picks, goal };
   d.shot = null;
+  if (d.shootout) planNextKick(d);
   d.node = 0;
   d.phase = 'reveal';
   d.deadline = null;
@@ -362,11 +390,59 @@ function advance(ctx: GameContext, d: MatchState, rng: Rng): void {
     d.deadline = null;
     return;
   }
+  if (d.shootout) {
+    // The last kick decided it (otherwise planNextKick would have queued another one).
+    d.reveal = null;
+    d.node = 0;
+    d.phase = 'fulltime';
+    return;
+  }
   if (d.resolvedInHalf >= ctx.balance.duelsPerHalf) {
     d.reveal = null;
     d.node = 0;
-    d.phase = d.half === 1 ? 'halftime' : 'fulltime';
+    if (d.half === 1) d.phase = 'halftime';
+    else endRegulation(d, rng);
     return;
   }
   startDuel(ctx, d, rng);
+}
+
+/** Full time: knockout matches get a winner, level ones go to a penalty shootout. */
+function endRegulation(d: MatchState, rng: Rng): void {
+  const a = d.sides.A.goals;
+  const b = d.sides.B.goals;
+  if (!d.knockout) {
+    d.phase = 'fulltime';
+    return;
+  }
+  if (a !== b) {
+    d.winner = a > b ? 'A' : 'B';
+    d.phase = 'fulltime';
+    return;
+  }
+  const first: Side = rng.pick(['A', 'B'] as const);
+  d.shootout = { first, kicks: [] };
+  d.shot = { shooter: first };
+  d.phase = 'shot';
+  d.deadline = null;
+}
+
+/**
+ * After a shootout kick: the second kicker of the round is next; after a complete round the shootout is
+ * over if exactly one side scored, otherwise the next round starts with the same first kicker.
+ */
+function planNextKick(d: MatchState): void {
+  const so = d.shootout!;
+  const kicks = so.kicks;
+  if (kicks.length % 2 === 1) {
+    d.shot = { shooter: other(kicks[kicks.length - 1].shooter) };
+    return;
+  }
+  const [k1, k2] = kicks.slice(-2);
+  if (k1.goal !== k2.goal) {
+    d.winner = k1.goal ? k1.shooter : k2.shooter;
+    d.shot = null;
+    return;
+  }
+  d.shot = { shooter: so.first };
 }

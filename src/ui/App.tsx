@@ -2,20 +2,29 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ctx } from '../data';
 import type { ClientView } from '../engine';
 import { LocalAITransport } from '../net/localAI';
-import { createRoom, joinRoom } from '../net/peer';
-import type { GameTransport } from '../net/transport';
+import { createRoom, createTournamentRoom, joinRoom } from '../net/peer';
+import { type GameTransport, type TournamentTransport, isTournamentTransport } from '../net/transport';
 import { Fulltime, Halftime } from './screens/EndScreens';
 import { Lobby } from './screens/Lobby';
 import { Match } from './screens/Match';
+import { TournamentGame } from './screens/Tournament';
 import { Transfer } from './screens/Transfer';
 import { useUpdateReady } from './pwa';
 import { type Stats, loadStats, loadUsername, recordMatch, saveUsername } from './stats';
+
+interface ActiveTournament {
+  transport: TournamentTransport;
+  /** Room creator only. */
+  code?: string;
+  open: boolean;
+}
 
 type Pending = { kind: 'host'; code: string; open: boolean; cancel: () => void } | { kind: 'guest'; cancel: () => void } | null;
 
 export function App() {
   const [username, setUsernameState] = useState(loadUsername);
   const [transport, setTransport] = useState<GameTransport | null>(null);
+  const [tournament, setTournament] = useState<ActiveTournament | null>(null);
   const [pending, setPending] = useState<Pending>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [stats, setStats] = useState<Stats>(loadStats);
@@ -29,6 +38,10 @@ export function App() {
     (message?: string) => {
       setTransport((t) => {
         t?.close();
+        return null;
+      });
+      setTournament((t) => {
+        t?.transport.close();
         return null;
       });
       setPending(null);
@@ -66,6 +79,18 @@ export function App() {
     }
   };
 
+  const startTournament = () => {
+    setNotice(null);
+    try {
+      const room = createTournamentRoom(ctx, name);
+      setTournament({ transport: room.transport, code: room.code, open: false });
+      room.opened.then(() => setTournament((t) => (t && t.transport === room.transport ? { ...t, open: true } : t)));
+      room.failed.catch((e: Error) => leave(e.message));
+    } catch (e) {
+      setNotice((e as Error).message);
+    }
+  };
+
   const startJoin = (code: string) => {
     setNotice(null);
     try {
@@ -74,7 +99,8 @@ export function App() {
       j.ready
         .then((t) => {
           setPending(null);
-          setTransport(t);
+          if (isTournamentTransport(t)) setTournament({ transport: t, open: true });
+          else setTransport(t);
         })
         .catch((e: Error) => {
           setPending(null);
@@ -93,6 +119,20 @@ export function App() {
       </button>
     </div>
   ) : null;
+
+  if (tournament)
+    return (
+      <>
+        {toast}
+        <TournamentGame
+          transport={tournament.transport}
+          roomCode={tournament.code}
+          roomOpen={tournament.open}
+          onExit={() => leave()}
+          onClosed={(reason) => leave(reason)}
+        />
+      </>
+    );
 
   if (transport)
     return (
@@ -146,6 +186,7 @@ export function App() {
       busy={false}
       onSolo={startSolo}
       onCreate={startHost}
+      onTournament={startTournament}
       onJoin={startJoin}
     />
     </>

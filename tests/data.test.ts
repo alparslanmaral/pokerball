@@ -44,7 +44,15 @@ describe('shipped game data', () => {
     const changed = playerList.map((p, i) => (i === 0 ? { ...p, price: p.price + 1 } : p));
     expect(hashData(changed, balance, catalog)).not.toBe(dbVersionHash);
     // key order must not matter
-    const reordered = playerList.map((p) => ({ trait: p.trait, price: p.price, id: p.id, firstName: p.firstName, lastName: p.lastName, position: p.position }));
+    const reordered = playerList.map(({ trait, price, id, firstName, lastName, position, ...rest }) => ({
+      ...rest,
+      trait,
+      price,
+      id,
+      firstName,
+      lastName,
+      position,
+    }));
     expect(hashData(reordered, balance, catalog)).toBe(dbVersionHash);
   });
 

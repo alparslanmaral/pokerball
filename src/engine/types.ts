@@ -169,6 +169,22 @@ export interface ShotReveal {
   shooter: Side;
   picks: Record<Side, Zone>;
   goal: boolean;
+  /** True for a kick of a penalty shootout (it does not change the match score). */
+  penalty?: boolean;
+}
+
+export interface ShootoutKick {
+  shooter: Side;
+  goal: boolean;
+}
+
+/**
+ * Knockout tie-breaker. Both sides take one kick per round (`first` goes first). The shootout ends after a
+ * round in which exactly one side scored; if both scored or both missed, another round is played.
+ */
+export interface Shootout {
+  first: Side;
+  kicks: ShootoutKick[];
 }
 
 export type Reveal = DuelReveal | ShotReveal;
@@ -183,6 +199,11 @@ export interface MatchState {
   resolvedTotal: number;
   sides: Record<Side, SideState>;
   shot: { shooter: Side } | null;
+  /** Knockout matches (tournament): a drawn match goes to a penalty shootout and never ends level. */
+  knockout: boolean;
+  shootout: Shootout | null;
+  /** Set at full time of a knockout match only. */
+  winner: Side | null;
   reveal: Reveal | null;
   /** Timestamp (ms, host clock) at which an auto-resolution fires. */
   deadline: number | null;

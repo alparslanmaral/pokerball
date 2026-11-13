@@ -1,41 +1,10 @@
 import { dbVersionHash } from '../data';
 import type { ClientView, GameContext, Intent } from '../engine';
 import { GameHost } from './host';
+import { Heartbeat } from './heartbeat';
 import { type Channel, PROTOCOL_VERSION, isIntent } from './protocol';
+import { TournamentGuestTransport } from './tournament';
 import type { GameTransport } from './transport';
-
-const PING_MS = 3000;
-const DEAD_MS = 12000;
-
-/** Sends pings and reports silence; shared by both ends. */
-class Heartbeat {
-  private last = Date.now();
-  private timers: ReturnType<typeof setInterval>[] = [];
-
-  constructor(
-    private channel: Channel,
-    private onDead: () => void,
-  ) {}
-
-  start(): void {
-    this.last = Date.now();
-    this.timers.push(
-      setInterval(() => this.channel.send({ t: 'ping' }), PING_MS),
-      setInterval(() => {
-        if (Date.now() - this.last > DEAD_MS) this.onDead();
-      }, PING_MS),
-    );
-  }
-
-  seen(): void {
-    this.last = Date.now();
-  }
-
-  stop(): void {
-    this.timers.forEach(clearInterval);
-    this.timers = [];
-  }
-}
 
 abstract class BaseTransport implements GameTransport {
   protected viewCbs = new Set<(v: ClientView) => void>();
@@ -169,17 +138,28 @@ export function acceptGuest(ctx: GameContext, hostName: string, channel: Channel
   });
 }
 
-/** Guest: sends hello and waits for welcome/reject. */
-export function joinHost(username: string, channel: Channel, hash = dbVersionHash): Promise<PeerGuestTransport> {
+/** Guest: sends hello and waits for welcome/reject. The host's welcome says whether this is a match or a tournament room. */
+export function joinAny(username: string, channel: Channel, hash = dbVersionHash): Promise<PeerGuestTransport | TournamentGuestTransport> {
   return new Promise((resolve, reject) => {
     channel.onClose(() => reject(new Error('The host closed the room.')));
     channel.onMessage((m) => {
-      if (m.t === 'welcome') resolve(new PeerGuestTransport(channel, m.username));
-      else if (m.t === 'reject') {
+      if (m.t === 'welcome') {
+        resolve(m.mode === 'tournament' ? new TournamentGuestTransport(channel, m.username) : new PeerGuestTransport(channel, m.username));
+      } else if (m.t === 'reject') {
         channel.close();
         reject(new Error(m.message));
       }
     });
     channel.send({ t: 'hello', v: PROTOCOL_VERSION, username, hash });
   });
+}
+
+/** Join a 1v1 match room (rejects if the room turns out to be a tournament). */
+export async function joinHost(username: string, channel: Channel, hash = dbVersionHash): Promise<PeerGuestTransport> {
+  const t = await joinAny(username, channel, hash);
+  if (!(t instanceof PeerGuestTransport)) {
+    t.close();
+    throw new Error('This room is a tournament, not a 1v1 match.');
+  }
+  return t;
 }

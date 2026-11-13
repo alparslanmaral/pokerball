@@ -5,6 +5,7 @@ import {
   type Intent,
   type MatchState,
   type Side,
+  type Squad,
   aiNextAction,
   createMatch,
   other,
@@ -24,6 +25,12 @@ export interface HostOptions {
   aiSides?: Side[];
   /** Min/max "thinking" delay of the AI in ms. */
   aiDelay?: [number, number];
+  /** Tournament matches: squads are already built, so the match starts with the first duel. */
+  squads?: Record<Side, Squad>;
+  /** Knockout rules (penalty shootout instead of a draw). */
+  knockout?: boolean;
+  /** Called after every accepted action with the new authoritative state. */
+  onChange?: (state: MatchState) => void;
 }
 
 /**
@@ -39,7 +46,12 @@ export class GameHost {
   private closed = false;
 
   constructor(private opts: HostOptions) {
-    this.state = createMatch(opts.ctx, { seed: opts.seed ?? randomSeed(), names: opts.names });
+    this.state = createMatch(opts.ctx, {
+      seed: opts.seed ?? randomSeed(),
+      names: opts.names,
+      squads: opts.squads,
+      knockout: opts.knockout,
+    });
   }
 
   get snapshot(): MatchState {
@@ -80,6 +92,7 @@ export class GameHost {
     this.broadcast();
     this.armTimer();
     this.scheduleAI();
+    this.opts.onChange?.(this.state);
   }
 
   private broadcast(): void {
