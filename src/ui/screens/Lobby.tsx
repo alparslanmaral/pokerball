@@ -12,10 +12,11 @@ interface Props {
   busy: boolean;
   onSolo: () => void;
   onCreate: () => void;
+  onTournament: () => void;
   onJoin: (code: string) => void;
 }
 
-export function Lobby({ username, setUsername, stats, notice, busy, onSolo, onCreate, onJoin }: Props) {
+export function Lobby({ username, setUsername, stats, notice, busy, onSolo, onCreate, onTournament, onJoin }: Props) {
   const [code, setCode] = useState('');
   const { install } = useInstallPrompt();
   const name = username.trim();
@@ -47,6 +48,9 @@ export function Lobby({ username, setUsername, stats, notice, busy, onSolo, onCr
           </button>
           <button className="btn big" disabled={!ok || busy} onClick={onCreate}>
             Create room
+          </button>
+          <button className="btn big" disabled={!ok || busy} onClick={onTournament} title="Knockout tournament for 2–16 players">
+            Create tournament
           </button>
           <div className="join-row">
             <input

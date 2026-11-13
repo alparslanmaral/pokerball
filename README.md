@@ -92,6 +92,22 @@ reports/       Generated balance report
   `VITE_PEER_HOST=localhost VITE_PEER_PORT=9000 VITE_PEER_SECURE=false npm run dev`
   (`VITE_PEER_PATH` defaults to `/`). Handy for offline testing.
 
+## Tournament mode
+
+Pick **Create tournament** in the lobby (2–16 players). Everybody else uses the normal **Join room** with the code.
+
+1. **Lobby:** the host sees who joined and presses *Start*. Nobody can join after that.
+2. **Transfer:** every player builds **one squad ($100, own private market) that plays the whole tournament**.
+3. **Rounds:** single elimination. Each round the survivors are drawn at random into pairs; all matches of a round are played at the same time.
+   With an odd number of survivors one player gets a **bye** (advances without playing). Byes rotate: nobody gets a second one before everybody had one.
+4. **Matches** use the normal rules but can never end level: if the score is tied after full time, a **penalty shootout** decides it.
+   Both sides take one kick per round (shooter picks left/center/right, the other side's keeper picks too; same 15 s rule as shots). The shootout ends after a
+   round in which exactly one side scored. If both scored or both missed, another round is played, as long as it takes. Shootout kicks do not change the match score.
+5. **Disconnects:** a player who leaves is eliminated and their current opponent advances by walkover. If the host leaves, the tournament ends (the host runs the engine).
+
+Architecture: the room creator runs a `TournamentHost` (`src/net/tournament.ts`) that owns the bracket (`src/engine/tournament.ts`, pure and tested), runs one `GameHost` per
+pairing and sends every participant its own projection over the same PeerJS connection used for 1v1 rooms. Protocol version 2.
+
 ## Admin editor (development only)
 
 `npm run dev` → open **http://localhost:5173/admin**.

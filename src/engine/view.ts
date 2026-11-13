@@ -1,7 +1,7 @@
 import { budgetLeft } from './market';
 import { activeTrait, playerTrait } from './match';
 import { scoreHand } from './scoring';
-import type { CardId, GameContext, Lock, Market, MatchState, Phase, Reveal, ScoreResult, Side, Squad, Zone } from './types';
+import type { CardId, GameContext, Lock, Market, MatchState, Phase, Reveal, ScoreResult, Shootout, Side, Squad, Zone } from './types';
 import { other } from './types';
 
 /**
@@ -42,6 +42,12 @@ export interface ClientView {
   oppContinued: boolean;
   meRematch: boolean;
   oppRematch: boolean;
+  /** Knockout (tournament) match: it cannot end level and has no rematch. */
+  knockout: boolean;
+  /** Penalty shootout in progress or finished (knockout matches only). */
+  shootout: Shootout | null;
+  /** Winner of a finished knockout match. */
+  winner: Side | null;
 }
 
 export function project(ctx: GameContext, state: MatchState, me: Side, now: number): ClientView {
@@ -81,6 +87,9 @@ export function project(ctx: GameContext, state: MatchState, me: Side, now: numb
     oppContinued: o.continued,
     meRematch: m.rematch,
     oppRematch: o.rematch,
+    knockout: state.knockout,
+    shootout: state.shootout,
+    winner: state.winner,
   };
 }
 

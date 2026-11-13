@@ -62,13 +62,23 @@ function Scoreboard({ view, onOpenSquad }: { view: ClientView; onOpenSquad: (m: 
           <span className="dash">:</span>
           <span className="goals">{view.goals[opp]}</span>
         </div>
-        <div className="meta">
-          <span>{view.half === 1 ? '1st half' : '2nd half'}</span>
-          <span className="sep">•</span>
-          <span>
-            {Math.min(view.resolvedInHalf + (view.phase === 'duel' ? 1 : 0), view.duelsPerHalf)}/{view.duelsPerHalf}
-          </span>
-        </div>
+        {view.shootout ? (
+          <div className="meta">
+            <span>Penalties</span>
+            <span className="sep">•</span>
+            <span>
+              {pensScored(view, me)}–{pensScored(view, opp)}
+            </span>
+          </div>
+        ) : (
+          <div className="meta">
+            <span>{view.half === 1 ? '1st half' : '2nd half'}</span>
+            <span className="sep">•</span>
+            <span>
+              {Math.min(view.resolvedInHalf + (view.phase === 'duel' ? 1 : 0), view.duelsPerHalf)}/{view.duelsPerHalf}
+            </span>
+          </div>
+        )}
       </div>
       <button className="team opp" onClick={() => onOpenSquad('opp')} title="View their squad">
         <span className="team-name">{view.names[opp]}</span>
@@ -76,6 +86,11 @@ function Scoreboard({ view, onOpenSquad }: { view: ClientView; onOpenSquad: (m: 
       </button>
     </header>
   );
+}
+
+/** Goals a side has scored in the penalty shootout so far. */
+export function pensScored(view: ClientView, side: 'A' | 'B'): number {
+  return view.shootout ? view.shootout.kicks.filter((k) => k.shooter === side && k.goal).length : 0;
 }
 
 const NODE_LABEL: Record<number, [string, string]> = {
@@ -292,7 +307,15 @@ function ShotArea({ view, send, deadlineAt }: Props) {
   const zones: Zone[] = ['left', 'center', 'right'];
   return (
     <section className="shot-area">
-      <h3>{shooting ? 'Penalty chance — pick where to shoot' : `${oppName} is shooting — pick where to dive`}</h3>
+      <h3>
+        {view.shootout
+          ? shooting
+            ? 'Penalty shootout — pick where to shoot'
+            : `Penalty shootout — ${oppName} shoots, pick where to dive`
+          : shooting
+            ? 'Penalty chance — pick where to shoot'
+            : `${oppName} is shooting — pick where to dive`}
+      </h3>
       <p className="muted">
         {shooting ? 'You score if the keeper picks a different zone.' : 'Save it by choosing the same zone as the shooter.'}
       </p>

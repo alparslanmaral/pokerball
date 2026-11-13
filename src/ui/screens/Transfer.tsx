@@ -5,16 +5,26 @@ import { PlayerCard } from '../components/PlayerCard';
 
 const POS_NAME: Record<Position, string> = { GK: 'Goalkeeper', DEF: 'Defender', MID: 'Midfielder', FWD: 'Forward' };
 
+export type TransferIntent = Extract<Intent, { type: 'buy' | 'unbuy' | 'transferReady' }>;
+
 interface Props {
-  view: ClientView;
+  /** A match view (1v1) or the transfer part of a tournament view. */
+  view: Pick<ClientView, 'market' | 'squad' | 'budgetLeft'> & {
+    meTransferReady: boolean;
+    oppTransferReady?: boolean;
+    names?: ClientView['names'];
+    me?: ClientView['me'];
+  };
   ctx: GameContext;
-  send: (i: Intent) => void;
+  send: (i: TransferIntent) => void;
+  /** Tournament mode: one squad for the whole tournament, everyone has to be ready. */
+  tournament?: { ready: number; total: number };
 }
 
-export function Transfer({ view, ctx, send }: Props) {
+export function Transfer({ view, ctx, send, tournament }: Props) {
   const [tab, setTab] = useState<Position>('GK');
   const squadFull = POSITIONS.every((p) => view.market[p].length === 0 || view.squad[p]);
-  const oppName = view.names[view.me === 'A' ? 'B' : 'A'];
+  const oppName = view.names && view.me ? view.names[view.me === 'A' ? 'B' : 'A'] : 'your opponent';
 
   return (
     <div className="screen transfer">
@@ -26,8 +36,9 @@ export function Transfer({ view, ctx, send }: Props) {
         </div>
       </header>
       <p className="muted lead">
-        Sign one player for every position. Your market is private and different from {oppName}&apos;s. You can change
-        your mind until you press Ready.
+        {tournament
+          ? 'Sign one player for every position. This squad plays the whole tournament, so choose carefully. Your market is private and different for every player. You can change your mind until you press Ready.'
+          : `Sign one player for every position. Your market is private and different from ${oppName}'s. You can change your mind until you press Ready.`}
       </p>
 
       <div className="tabs" role="tablist">
@@ -78,7 +89,17 @@ export function Transfer({ view, ctx, send }: Props) {
 
       <footer className="screen-foot">
         <div className="status">
-          {view.meTransferReady ? (
+          {tournament ? (
+            view.meTransferReady ? (
+              <span>
+                Waiting for the others… ({tournament.ready}/{tournament.total} ready)
+              </span>
+            ) : (
+              <span className="muted">
+                {squadFull ? 'Squad complete.' : 'Fill all four positions to continue.'} {tournament.ready}/{tournament.total} players ready.
+              </span>
+            )
+          ) : view.meTransferReady ? (
             <span>
               Waiting for {oppName}… {view.oppTransferReady ? '(ready)' : '(still shopping)'}
             </span>

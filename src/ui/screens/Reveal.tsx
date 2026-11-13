@@ -212,7 +212,10 @@ function ShotRevealView({ r, view }: { r: ShotReveal; view: ClientView }) {
   const shooterName = view.names[r.shooter];
   return (
     <>
-      <h3 className="reveal-title">{iShot ? 'Your shot' : `${shooterName}'s shot`}</h3>
+      <h3 className="reveal-title">
+        {r.penalty ? 'Penalty · ' : ''}
+        {iShot ? 'Your shot' : `${shooterName}'s shot`}
+      </h3>
       <div className="shot-stage">
         <div className="shot-goal">
           {step >= 1 && (

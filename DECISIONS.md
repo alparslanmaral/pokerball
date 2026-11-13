@@ -92,3 +92,20 @@ Numbers come from `reports/balance.md` (`npm run sim`).
     module scripts miss the cache offline (found by the offline smoke test). Cross-origin traffic (PeerJS signalling) is never intercepted.
 37. **Update flow**: the new worker activates immediately (`skipWaiting`); if a page was already controlled, a toast asks the user to reload. The service worker is production-only, so `npm run dev` is never cached.
 38. **Mobile**: the Leave button becomes a small ✕ at the top right; the hand is a 4-column grid and Ready/Discard/Clear live in a sticky bar so they never scroll away; the sort buttons are hidden on phones to save space.
+
+## Tournament mode
+
+39. **Bracket shape.** The brief only says "knockout, odd numbers allowed". → Survivors are re-drawn at random every round (no fixed bracket tree), odd fields get rotating byes.
+    Why: it handles any player count and disconnects without special cases. A field of n needs about ceil(log2 n) rounds (+1 for some odd fields).
+40. **One squad per tournament**, built in the transfer phase before round 1 (as requested). Everybody has $100 and an independent private market, exactly like a 1v1 match.
+41. **Tie-break = alternating penalty rounds** (as requested): both sides kick once per round, the first kicker is random per match and stays first every round, and the shootout ends only after a
+    round in which exactly one side scored. It is implemented inside the match engine (`MatchState.shootout`) by reusing the `shot` phase, so the UI, timers (15 s, random pick) and secrecy of picks work unchanged.
+    Shootout goals are kept apart from the match score. Knockout matches have `winner` set at full time and cannot be rematched.
+42. **Who runs what.** The room creator hosts *all* matches (one `GameHost` each, in parallel) and relays per-player projections; guests talk only to the host. Host leaving ends the tournament (documented limitation). Guests joining is only possible during the lobby.
+43. **Pacing between rounds.** When every match of a round is decided the next round is drawn at once; finished full-time screens close by themselves after 8 s (or when the player presses continue)
+    and the next matches start after 16 s (8 s after the transfer phase for round 1). Nobody can stall the bracket by not pressing a button.
+44. **Disconnects.** In the lobby the player just disappears; during transfer they are removed (the tournament is cancelled if fewer than 2 players remain); in a match the opponent advances by walkover.
+    If everybody else leaves, the last player standing is champion. No reconnect (as in 1v1).
+45. **Stats.** Tournament matches are not added to the local W/D/L record: a penalty win after a draw would be recorded as a draw by the existing goals-based rule. Easy to add later if wanted.
+46. **Protocol v2.** `welcome` now carries `mode`, and tournaments use `tintent`/`tview` messages. The version bump makes a stale cached client get the "please refresh" message instead of misbehaving.
+47. **Pre-existing test fix.** `tests/data.test.ts` ("key order must not matter") dropped the optional `image` field when re-ordering players and failed on `main`; it now keeps every field.

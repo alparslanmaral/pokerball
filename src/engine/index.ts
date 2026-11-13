@@ -11,3 +11,4 @@ export * from './ai';
 export * from './power';
 export * from './validate';
 export * from './simulate';
+export * from './tournament';

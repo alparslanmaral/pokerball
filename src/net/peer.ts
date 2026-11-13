@@ -1,8 +1,9 @@
 import Peer, { type DataConnection } from 'peerjs';
 import type { GameContext } from '../engine';
 import type { Channel, Msg } from './protocol';
-import { acceptGuest, joinHost } from './session';
-import type { GameTransport } from './transport';
+import { acceptGuest, joinAny } from './session';
+import { TournamentHost, TournamentHostTransport, acceptTournamentGuest } from './tournament';
+import type { GameTransport, TournamentTransport } from './transport';
 
 /**
  * PeerJS (WebRTC) glue. Uses the public PeerJS broker for signalling and public STUN servers only:
@@ -77,7 +78,7 @@ function describeError(err: { type?: string; message?: string }, code?: string):
 }
 
 /** Closing the transport also tears down the PeerJS peer. */
-function withPeerCleanup<T extends GameTransport>(transport: T, peer: Peer): T {
+function withPeerCleanup<T extends { close(): void }>(transport: T, peer: Peer): T {
   const close = transport.close.bind(transport);
   transport.close = () => {
     close();
@@ -152,12 +153,12 @@ export function joinRoom(
   _ctx: GameContext,
   code: string,
   username: string,
-): { ready: Promise<GameTransport>; cancel(): void } {
+): { ready: Promise<GameTransport | TournamentTransport>; cancel(): void } {
   const peer = new Peer(PEER_CONFIG);
   let settled = false;
   let rejectReady: (e: Error) => void = () => {};
 
-  const ready = new Promise<GameTransport>((resolve, reject) => {
+  const ready = new Promise<GameTransport | TournamentTransport>((resolve, reject) => {
     rejectReady = reject;
     const fail = (message: string) => {
       if (settled) return;
@@ -174,7 +175,7 @@ export function joinRoom(
       const conn = peer.connect(ID_PREFIX + code, { reliable: true, serialization: 'json' });
       conn.on('error', (e) => fail(describeError(e as { type?: string; message?: string }, code)));
       conn.on('open', () => {
-        joinHost(username, wrap(conn)).then(
+        joinAny(username, wrap(conn)).then(
           (t) => {
             clearTimeout(timer);
             settled = true;
@@ -197,6 +198,61 @@ export function joinRoom(
         rejectReady(new Error('Cancelled.'));
       }
       peer.destroy();
+    },
+  };
+}
+
+export interface TournamentRoomHandle {
+  code: string;
+  /** Resolves once the room is registered with the broker; only then can guests find it. */
+  opened: Promise<void>;
+  /** The host's transport exists immediately: guests join it while the lobby is open. */
+  transport: TournamentHostTransport;
+  /** Rejects if the broker cannot be reached or the peer connection layer fails. */
+  failed: Promise<never>;
+  cancel(): void;
+}
+
+/** Tournament room: any number of guests (up to the lobby limit) connect to one PeerJS peer. */
+export function createTournamentRoom(ctx: GameContext, username: string): TournamentRoomHandle {
+  const code = newRoomCode();
+  const peer = new Peer(ID_PREFIX + code, PEER_CONFIG);
+  const host = new TournamentHost(ctx, username);
+  const transport = withPeerCleanup(new TournamentHostTransport(host), peer);
+  transport.roomCode = code;
+  let settled = false;
+  let failWith: (e: Error) => void = () => {};
+  const failed = new Promise<never>((_, reject) => {
+    failWith = reject;
+  });
+  failed.catch(() => {});
+  const opened = new Promise<void>((resolve) => peer.on('open', () => resolve()));
+  opened.catch(() => {});
+  const openTimer = setTimeout(() => {
+    if (settled) return;
+    settled = true;
+    failWith(new Error('Could not reach the matchmaking server (PeerJS). Check your connection and try again.'));
+  }, OPEN_TIMEOUT_MS);
+  peer.on('open', () => clearTimeout(openTimer));
+  peer.on('error', (err) => {
+    // Errors about a single guest connection must not kill the whole room once it is open.
+    if (err.type === 'peer-unavailable' || err.type === 'webrtc') return;
+    if (settled) return;
+    settled = true;
+    failWith(new Error(describeError(err)));
+  });
+  peer.on('connection', (conn) => {
+    conn.on('open', () => acceptTournamentGuest(host, wrap(conn)));
+  });
+  return {
+    code,
+    opened,
+    transport,
+    failed,
+    cancel: () => {
+      settled = true;
+      clearTimeout(openTimer);
+      transport.close();
     },
   };
 }
